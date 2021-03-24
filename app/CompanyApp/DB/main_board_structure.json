@@ -3,13 +3,13 @@
     {
       "from": "json",
       "date": "24.03.2021",
-      "body": "Moja pierwsza wiadomość",
+      "body": "I will write this test",
       "msgId": 1
     },
     {
       "from": "json",
       "date": "24.03.2021",
-      "body": "Moja pierwsza wiadomość",
+      "body": "I am fine",
       "msgId": 2
     }
   ]

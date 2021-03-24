@@ -18,13 +18,15 @@
 {% block content %}
     {{ render_navbar() }}
     <div id="app" v-cloak>
-        main board
-
-        <ul class="list-group" style="height:350px; width:100%; overflow:hidden; overflow-y:auto;">
-            <li class="list-group-item" v-for="message in messages">
-                [[ message ]]
-            </li>
-        </ul>
+        <div class="jumbotron">
+            <ul class="list-group" style="height:350px; width:100%; overflow:hidden; overflow-y:auto;">
+                <li class="list-group-item" v-for="message in messages">
+                    <p class="font-weight-bold"> [[ message['from'] ]] </p>
+                    <span> [[ message['body'] ]] </span>
+                    <span style="float:right"> [[ message['date'] ]] </span>
+                </li>
+            </ul>
+        </div>
     </div>
     <script>
         const app = new Vue({
