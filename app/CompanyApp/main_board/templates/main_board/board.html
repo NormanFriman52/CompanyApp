@@ -1,18 +1,57 @@
 {% extends "base.html" %}
-{%  from "_navbar.html" import render_navbar %}
+{% from "_navbar.html" import render_navbar %}
 
 {% block title %}
-     Board
+    Board
 {% endblock %}
 
 {% block head %}
+    <meta charset="utf-8">
     <script src="https://cdn.jsdelivr.net/npm/vue"></script>
     <style>
-
+        [v-cloak] {
+            display: none;
+        }
     </style>
 {% endblock %}
 
 {% block content %}
     {{ render_navbar() }}
-    main board
+    <div id="app" v-cloak>
+        main board
+
+        <ul class="list-group" style="height:350px; width:100%; overflow:hidden; overflow-y:auto;">
+            <li class="list-group-item" v-for="message in messages">
+                [[ message ]]
+            </li>
+        </ul>
+    </div>
+    <script>
+        const app = new Vue({
+            el: "#app",
+            delimiters: ['[[', ']]'],
+            data: () => ({
+                intervalId: null,
+                dataLoaded: false,
+                messages: []
+            }),
+            methods: {
+                loadData() {
+                    fetch("{{ url_for_api_messages }}")
+                        .then(response => response.json())
+                        .then(json => {
+                            this.messages = json.messages
+                            console.log(this.messages)
+                        });
+                },
+            },
+            mounted() {
+                this.loadData();
+                this.intervalId = setInterval(() => this.loadData(), 5000);
+            },
+            beforeDestroy() {
+                clearInterval(this.intervalId);
+            }
+        })
+    </script>
 {% endblock %}
