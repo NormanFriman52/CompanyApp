@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% from "_navbar.html" import render_navbar %}
+{% from "_macros.html" import render_field %}
+
+{% block title %}
+    Board
+{% endblock %}
+
+{% block head %}
+    <meta charset="utf-8">
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    {{ render_navbar() }}
+ LOGIN
+    <div class="login_form_container" id="login_form_container">
+        <form method="post" id="login_form">
+            <dl>
+                {{ form.csrf_token }}
+                {{ render_field(form.user) }}
+                {{ render_field(form.password) }}
+            </dl>
+            <input type="submit">
+        </form>
+    </div>
+{% endblock %}
