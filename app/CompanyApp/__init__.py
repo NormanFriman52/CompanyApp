@@ -1,6 +1,7 @@
 from flask import Flask
 from .api import api_bp
 from .main import main_bp
+from .main_board import main_board_bp
 
 
 def create_app():
@@ -11,5 +12,6 @@ def create_app():
 
     app.register_blueprint(main_bp)
     app.register_blueprint(api_bp, url_prefix="/api")
+    app.register_blueprint(main_board_bp, url_prefix="/board")
 
     return app
