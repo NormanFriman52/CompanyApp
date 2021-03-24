@@ -2,6 +2,7 @@
   "messages": {
     "from": "user",
     "date": "24.03.2021",
-    "body": "Moja pierwsza wiadomość"
+    "body": "Moja pierwsza wiadomość",
+    "msgId": 1
   }
 }

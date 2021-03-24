@@ -1,7 +1,7 @@
 [
   {
     "username": "json",
-    "uid": "1",
+    "uid": 1,
     "name": "json",
     "surname": "jsonwski",
     "gender": "male",
@@ -15,7 +15,7 @@
   },
   {
     "username": "dzonson",
-    "uid": "1",
+    "uid": 1,
     "name": "json",
     "surname": "jsonwski",
     "gender": "male",
