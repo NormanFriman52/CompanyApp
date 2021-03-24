@@ -7,5 +7,3 @@ api_bp = Blueprint("api", __name__, template_folder="templates")
 def api():
     session["url"] = url_for("api.api")
     return 'api'
-
-

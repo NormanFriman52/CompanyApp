@@ -1,0 +1,30 @@
+[
+  {
+    "username": "json",
+    "uid": "1",
+    "name": "json",
+    "surname": "jsonwski",
+    "gender": "male",
+    "email": "json@test.com",
+    "hash_code": "hashing code",
+    "password": "test",
+    "state": {
+      "online": true,
+      "available": true
+    }
+  },
+  {
+    "username": "dzonson",
+    "uid": "1",
+    "name": "json",
+    "surname": "jsonwski",
+    "gender": "male",
+    "email": "json@test.com",
+    "hash_code": "hashing code",
+    "password": "test",
+    "state": {
+      "online": true,
+      "available": true
+    }
+  }
+]
