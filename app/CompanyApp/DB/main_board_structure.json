@@ -1,8 +1,16 @@
 {
-  "messages": {
-    "from": "user",
-    "date": "24.03.2021",
-    "body": "Moja pierwsza wiadomość",
-    "msgId": 1
-  }
+  "messages": [
+    {
+      "from": "json",
+      "date": "24.03.2021",
+      "body": "Moja pierwsza wiadomość",
+      "msgId": 1
+    },
+    {
+      "from": "json",
+      "date": "24.03.2021",
+      "body": "Moja pierwsza wiadomość",
+      "msgId": 2
+    }
+  ]
 }

@@ -18,7 +18,7 @@ def get_users_params(parse=True):
 
 
 def get_single_user_params(uid):
-    if isinstance(uid,str):
+    if isinstance(uid, str):
         uid = int(uid)
     users = get_users_params(parse=False)
     for user in users:
@@ -26,3 +26,7 @@ def get_single_user_params(uid):
             return user
     else:
         return {}
+
+
+def get_main_board_massages():
+    return get_json(r'C:\Users\kgolonka\Desktop\home\ChatApp\CompanyApp\app\CompanyApp\DB\main_board_structure.json')

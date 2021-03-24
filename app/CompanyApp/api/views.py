@@ -16,3 +16,8 @@ def user():
         return get_single_user_params(uid)
     else:
         return get_users_params()
+
+
+@api_bp.route("/main_board")
+def main_board():
+    return get_main_board_massages()
