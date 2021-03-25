@@ -1,6 +1,5 @@
 from flask import Blueprint, render_template, flash, redirect, session, request, url_for
 from .forms import LoginForm
-from ..models import User
 from CompanyApp.controllers.users_controller import check_credentials
 
 authorization_bp = Blueprint("authorization", __name__, template_folder="templates")

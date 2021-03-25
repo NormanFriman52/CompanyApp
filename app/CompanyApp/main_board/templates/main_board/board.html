@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% from "_navbar.html" import render_navbar %}
+{% from "_macros.html" import render_field %}
 
 {% block title %}
     Board
@@ -26,6 +27,14 @@
                     <span style="float:right"> [[ message['date'] ]] </span>
                 </li>
             </ul>
+            <form action={{ url_for('main_board.send') }} method="post" id="message_form">
+                <dl>
+                    {{ message_form.csrf_token }}
+                    {{ message_form.message.label() }}
+                    {{ message_form.message(**{"class": "form-control"}) }}
+                </dl>
+                <input type="submit">
+            </form>
         </div>
     </div>
     <script>
