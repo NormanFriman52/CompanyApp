@@ -31,6 +31,7 @@
                 <dl>
                     {{ message_form.csrf_token }}
                     {{ message_form.message.label() }}
+                    <input id="from" name="from" type="hidden" value='{{ session.username }}' />
                     {{ message_form.message(**{"class": "form-control"}) }}
                 </dl>
                 <input type="submit">

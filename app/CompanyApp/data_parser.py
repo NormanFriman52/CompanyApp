@@ -1,3 +1,4 @@
+from CompanyApp.controllers.main_board_messages_controller import get_messages
 import json
 
 
@@ -29,4 +30,4 @@ def get_single_user_params(uid):
 
 
 def get_main_board_massages():
-    return get_json(r'C:\Users\kgolonka\Desktop\home\ChatApp\CompanyApp\app\CompanyApp\DB\main_board_structure.json')
+    return {"messages": get_messages()}
