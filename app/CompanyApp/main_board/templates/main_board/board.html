@@ -33,19 +33,16 @@
         }
 
         .chat {
-            background-color: #eee0d5;
             overflow: scroll;
-            max-height: 300px;
+            max-height: 600px;
         }
 
         .message {
-            padding: 0.5em;
             margin: 0.5em;
             line-height: 1.1em;
-            background-color: white;
         }
         .message-box{
-            height: 50px;
+            height: 60px;
         }
 
     </style>
@@ -56,25 +53,21 @@
     <div id="app" v-cloak>
 
         <div class="jumbotron">
-            <div id="scroller" class="chat">
-                <div v-for="message in messages" class="message">
-                    <div v-if="message.from == user">
-                        <div class="message-box">
+            <div id="scroller" class="chat container">
+                <div v-for="message in messages" class="message row">
+                    <div v-if="message.from == user" class="col offset-md-4 message-box bg-info text-white" >
                             <p class="text-right">
                                 <span> [[ message['date'] ]] </span>
                                 <span class="font-weight-bold"> [[ message['from'] ]] </span>
                             </p>
-                            <p style="float:right"> [[ message['body'] ]] </p>
-                        </div>
+                            <p class="text-right pb-5 mb-3"> [[ message['body'] ]] </p>
                     </div>
-                    <div v-else>
-                        <div class="message-box bg-primary text-white">
+                    <div v-else class="col-4 message-box bg-dark text-white">
                             <p>
                                 <span class="font-weight-bold"> [[ message['from'] ]] </span>
                                 <span> [[ message['date'] ]] </span>
                             </p>
                             <p> [[ message['body'] ]] </p>
-                        </div>
                     </div>
                 </div>
 
@@ -122,6 +115,7 @@
                         }, (error) => {
                             console.log(error);
                         });
+                    this.scrollToBottom()
                     message.value = ""
                 },
                 scrollOnTop() {
@@ -129,6 +123,10 @@
                     if (scroller.scrollTop == 0) {
                         console.log("reached top")
                     }
+                },
+                scrollToBottom(){
+                    const scroller = document.getElementById('scroller')
+                    scroller.scrollTop = scroller.scrollHeight
                 }
             },
             mounted() {
@@ -140,8 +138,7 @@
             },
             updated() {
                 if (!this.scrolled) {
-                    const scroller = document.getElementById('scroller')
-                    scroller.scrollTop = scroller.scrollHeight
+                    this.scrollToBottom()
                     this.scrolled = true
                 }
 

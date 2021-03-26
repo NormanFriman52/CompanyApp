@@ -23,6 +23,10 @@ def user():
 
 @api_bp.route("/main_board")
 def main_board():
+    limit = request.args.get("limit")
+    if limit:
+        limit = int(limit)
+        return get_main_board_massages(limit)
     return get_main_board_massages()
 
 
@@ -34,7 +38,7 @@ def send():
             "body": payload.get("message"),
             "date": f'{datetime.now().strftime("%d/%m/%Y %H:%M:%S")}',
             "from": payload.get("from"),
-            "msgId": get_last_id()+1
+            "msgId": get_last_id() + 1
         }
         insert_message(insert_msg)
         content = {

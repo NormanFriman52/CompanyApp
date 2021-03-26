@@ -29,5 +29,5 @@ def get_single_user_params(uid):
         return {}
 
 
-def get_main_board_massages():
-    return {"messages": get_messages()}
+def get_main_board_massages(limit=None):
+    return {"messages": get_messages(limit=limit)}

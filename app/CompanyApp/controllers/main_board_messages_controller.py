@@ -2,9 +2,12 @@ from CompanyApp.database import db
 import pymongo
 
 
-def get_messages():
+def get_messages(limit=None):
     collection = db.get_collection("main_board")
-    messages = collection.find({}, {'_id': 0})
+    if limit:
+        messages = collection.find({}, {'_id': 0}).sort("msgId", -1).limit(limit)
+    else:
+        messages = collection.find({}, {'_id': 0})
     if messages:
         return list(messages)
     else:
