@@ -72,43 +72,50 @@
 {% block content %}
     {{ render_navbar() }}
     <div id="app" v-cloak>
-        <div>
-            <div class="jumbotron mt-5 ml-5" style="width: 700px; height: 600px">
-                <div id="scroller" class="chat container">
-                    <div v-for="message in messages" class="message row">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-2 ml-2 mt-5 card">
+                    <button type="button" v-on:click="setChat('main_board')" class="btn btn-outline-dark mt-2">
+                        Main Board
+                    </button>
+                </div>
+                <div class="col jumbotron mt-5 ml-5 " style="width: 700px; height: 600px">
+                    <div id="scroller" class="chat container">
+                        <div v-for="message in messages" class="message row">
 
-                        <div v-if="message.from == user" class="col offset-md-3 message-box bg-info text-white">
-                            <p class="text-right">
-                                <span> [[ message['date'] ]] </span>
-                                <span class="font-weight-bold"> [[ message['from'] ]] </span>
-                            </p>
-                            <p class="text-right"> [[ message['body'] ]] </p>
+                            <div v-if="message.from == user" class="col offset-md-3 message-box bg-info text-white">
+                                <p class="text-right">
+                                    <span> [[ message['date'] ]] </span>
+                                    <span class="font-weight-bold"> [[ message['from'] ]] </span>
+                                </p>
+                                <p class="text-right"> [[ message['body'] ]] </p>
+                            </div>
+
+                            <div v-else class="col-9 message-box bg-dark text-white">
+                                <p>
+                                    <span class="font-weight-bold"> [[ message['from'] ]] </span>
+                                    <span> [[ message['date'] ]] </span>
+                                </p>
+                                <p> [[ message['body'] ]] </p>
+                            </div>
+
                         </div>
 
-                        <div v-else class="col-9 message-box bg-dark text-white">
-                            <p>
-                                <span class="font-weight-bold"> [[ message['from'] ]] </span>
-                                <span> [[ message['date'] ]] </span>
-                            </p>
-                            <p> [[ message['body'] ]] </p>
-                        </div>
-
+                        <div id="anchor"></div>
                     </div>
 
-                    <div id="anchor"></div>
+                    <form id="message_form" v-if="chat">
+                        <dl>
+                            {{ message_form.csrf_token }}
+                            <input id="from" name="from" type="hidden" value='{{ session.username }}'/>
+                            {{ message_form.message(**{"class": "form-control","v-on:keydown.enter.prevent":"sendMsg()","autocomplete":"off"}) }}
+                        </dl>
+                        <a v-on:click="sendMsg()" class="btn btn-primary" id="submit">SUBMIT</a>
+                    </form>
                 </div>
-
-                <form id="message_form">
-                    <dl>
-                        {{ message_form.csrf_token }}
-                        <input id="from" name="from" type="hidden" value='{{ session.username }}'/>
-                        {{ message_form.message(**{"class": "form-control","v-on:keydown.enter.prevent":"sendMsg()","autocomplete":"off"}) }}
-{#                        v-on="keydown:addCategory | key 'enter'"#}
-                    </dl>
-                    <a v-on:click="sendMsg()"  class="btn btn-primary" id="submit">SUBMIT</a>
-                </form>
             </div>
         </div>
+    </div>
     </div>
     <script>
         const app = new Vue({
@@ -120,21 +127,25 @@
                 messages: [],
                 messagesIds: [],
                 scrolled: false,
+                chat: "",
+                users: [],
                 user: "{{ session.username }}",
             }),
             methods: {
                 loadData() {
-                    fetch("{{ url_for_api_messages }}")
-                        .then(response => response.json())
-                        .then(json => {
-                            for (let message of json.messages) {
-                                if (!this.messagesIds.includes(message.msgId)) {
-                                    console.log(message)
-                                    this.messagesIds.push(message.msgId)
-                                    this.messages.push(message)
+                    console.log(this.scrolled)
+                    if (this.chat) {
+                        fetch(this.chat)
+                            .then(response => response.json())
+                            .then(json => {
+                                for (let message of json.messages) {
+                                    if (!this.messagesIds.includes(message.msgId)) {
+                                        this.messagesIds.push(message.msgId)
+                                        this.messages.push(message)
+                                    }
                                 }
-                            }
-                        });
+                            });
+                    }
                 },
                 sendMsg() {
                     const message = document.getElementById('message')
@@ -172,6 +183,11 @@
                 scrollToBottom() {
                     const scroller = document.getElementById('scroller')
                     scroller.scrollTop = scroller.scrollHeight
+                },
+                setChat(chat) {
+                    console.log(chat)
+                    this.chat = "{{ url_for_api_messages }}"
+                    this.scrolled = false
                 }
             },
             mounted() {
