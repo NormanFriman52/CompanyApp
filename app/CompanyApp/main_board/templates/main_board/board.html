@@ -9,6 +9,7 @@
 {% block head %}
     <meta charset="utf-8">
     <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <style>
         [v-cloak] {
             display: none;
@@ -22,19 +23,30 @@
         <div class="jumbotron">
             <ul class="list-group" style="height:350px; width:100%; overflow:hidden; overflow-y:auto;">
                 <li class="list-group-item" v-for="message in messages">
-                    <p class="font-weight-bold"> [[ message['from'] ]] </p>
-                    <span> [[ message['body'] ]] </span>
-                    <span style="float:right"> [[ message['date'] ]] </span>
+                    <div v-if ="message.from == user">
+                        <p class="text-right">
+                            <span> [[ message['date'] ]] </span>
+                            <span class="font-weight-bold"> [[ message['from'] ]] </span>
+                        </p>
+                        <span style="float:right"> [[ message['body'] ]] </span>
+                    </div>
+                    <div v-else>
+                        <p>
+                            <span class="font-weight-bold"> [[ message['from'] ]] </span>
+                            <span> [[ message['date'] ]] </span>
+                        </p>
+                        <span> [[ message['body'] ]] </span>
+                    </div>
                 </li>
             </ul>
-            <form action={{ url_for('main_board.send') }} method="post" id="message_form">
+            <form action={{ url_for('api.send') }} method="post" id="message_form">
                 <dl>
                     {{ message_form.csrf_token }}
                     {{ message_form.message.label() }}
-                    <input id="from" name="from" type="hidden" value='{{ session.username }}' />
+                    <input id="from" name="from" type="hidden" value='{{ session.username }}'/>
                     {{ message_form.message(**{"class": "form-control"}) }}
                 </dl>
-                <input type="submit">
+                <a href="#" v-on:click="sendMsg()">SUBMIT</a>
             </form>
         </div>
     </div>
@@ -45,7 +57,8 @@
             data: () => ({
                 intervalId: null,
                 dataLoaded: false,
-                messages: []
+                messages: [],
+                user: "{{ session.username }}"
             }),
             methods: {
                 loadData() {
@@ -53,13 +66,27 @@
                         .then(response => response.json())
                         .then(json => {
                             this.messages = json.messages
-                            console.log(this.messages)
                         });
                 },
+                sendMsg() {
+                    const message = document.getElementById('message')
+                    const from = document.getElementById('from').value
+                    axios
+                        .post('{{ url_for('api.send') }}', {
+                            message: message.value,
+                            from: from
+                        })
+                        .then((response) => {
+                            console.log(response);
+                        }, (error) => {
+                            console.log(error);
+                        });
+                    message.value = ""
+                }
             },
             mounted() {
                 this.loadData();
-                this.intervalId = setInterval(() => this.loadData(), 5000);
+                this.intervalId = setInterval(() => this.loadData(), 500);
             },
             beforeDestroy() {
                 clearInterval(this.intervalId);
