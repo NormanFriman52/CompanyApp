@@ -38,6 +38,14 @@ def main_board():
     return get_main_board_massages()
 
 
+@api_bp.route("/chat_rooms")
+def chat_rooms():
+    chat_room_between = [request.args.get("friend"), request.args.get("user")]
+    chat_room_between.sort()
+    print(chat_room_between)
+    return {"messages": []}
+
+
 @api_bp.route("/main_board/send", methods=["POST"])
 def send():
     payload = request.get_json()

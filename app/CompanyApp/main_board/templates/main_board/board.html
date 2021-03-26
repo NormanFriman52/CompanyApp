@@ -201,9 +201,16 @@
                     scroller.scrollTop = scroller.scrollHeight
                 },
                 setChat(chat) {
-                    console.log(chat)
-                    this.chat = "{{ url_for_api_messages }}"
-                    this.scrolled = false
+                    if (chat === "main_board") {
+                        this.chat = "{{ url_for_api_messages }}"
+                        this.scrolled = false
+                    }
+                    else{
+                        this.changeRoom(chat,"{{ session.username }}")
+                    }
+                },
+                changeRoom(friend, user){
+                    this.chat = "{{ url_for('api.chat_rooms') }}?" +"friend=" + friend + "&user=" + user
                 }
             },
             mounted() {
