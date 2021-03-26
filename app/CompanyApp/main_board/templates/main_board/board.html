@@ -14,16 +14,48 @@
         [v-cloak] {
             display: none;
         }
+
+        #scroller * {
+            overflow-anchor: none;
+        }
+
+        #scroller::-webkit-scrollbar {
+            display: none;
+        }
+
+        #anchor {
+            overflow-anchor: auto;
+            height: 1px;
+        }
+
+        :root {
+            font-family: sans-serif;
+        }
+
+        .chat {
+            background-color: #eee0d5;
+            overflow: scroll;
+            max-height: 300px;
+        }
+
+        .message {
+            padding: 0.5em;
+            margin: 0.5em;
+            line-height: 1.1em;
+            background-color: white;
+        }
+
     </style>
 {% endblock %}
 
 {% block content %}
     {{ render_navbar() }}
     <div id="app" v-cloak>
+
         <div class="jumbotron">
-            <ul class="list-group" style="height:350px; width:100%; overflow:hidden; overflow-y:auto;">
-                <li class="list-group-item" v-for="message in messages">
-                    <div v-if ="message.from == user">
+            <div id="scroller" class="chat">
+                <div v-for="message in messages" class="message">
+                    <div v-if="message.from == user">
                         <p class="text-right">
                             <span> [[ message['date'] ]] </span>
                             <span class="font-weight-bold"> [[ message['from'] ]] </span>
@@ -37,16 +69,18 @@
                         </p>
                         <span> [[ message['body'] ]] </span>
                     </div>
-                </li>
-            </ul>
+                </div>
+
+                <div id="anchor"></div>
+            </div>
+
             <form action={{ url_for('api.send') }} method="post" id="message_form">
                 <dl>
                     {{ message_form.csrf_token }}
-                    {{ message_form.message.label() }}
                     <input id="from" name="from" type="hidden" value='{{ session.username }}'/>
                     {{ message_form.message(**{"class": "form-control"}) }}
                 </dl>
-                <a href="#" v-on:click="sendMsg()">SUBMIT</a>
+                <a href="#" v-on:click="sendMsg()" class="btn btn-primary">SUBMIT</a>
             </form>
         </div>
     </div>
@@ -58,7 +92,8 @@
                 intervalId: null,
                 dataLoaded: false,
                 messages: [],
-                user: "{{ session.username }}"
+                scrolled: false,
+                user: "{{ session.username }}",
             }),
             methods: {
                 loadData() {
@@ -77,16 +112,32 @@
                             from: from
                         })
                         .then((response) => {
-                            console.log(response);
                         }, (error) => {
                             console.log(error);
                         });
                     message.value = ""
+                },
+                scrollOnTop() {
+                    const scroller = document.getElementById('scroller')
+                    if (scroller.scrollTop == 0) {
+                        console.log("reached top")
+                    }
                 }
             },
             mounted() {
                 this.loadData();
+                const scroller = document.getElementById('scroller')
+                scroller.addEventListener('scroll', this.scrollOnTop)
                 this.intervalId = setInterval(() => this.loadData(), 500);
+
+            },
+            updated() {
+                if (!this.scrolled) {
+                    const scroller = document.getElementById('scroller')
+                    scroller.scrollTop = scroller.scrollHeight
+                    this.scrolled = true
+                }
+
             },
             beforeDestroy() {
                 clearInterval(this.intervalId);

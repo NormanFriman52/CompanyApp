@@ -3,4 +3,4 @@ from wtforms import StringField, PasswordField, validators
 
 
 class MessageForm(FlaskForm):
-    message = StringField("message", [validators.Length(max=100), validators.DataRequired()])
+    message = StringField("message", [validators.Length(max=100)])
