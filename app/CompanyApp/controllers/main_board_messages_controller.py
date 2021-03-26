@@ -10,7 +10,9 @@ def get_messages(limit=None, last_id=None):
         else:
             return list(collection.find({"msgId": {"$lt": last_id}}, {'_id': 0}).sort("msgId", -1))
     if limit:
-        return list(collection.find({}, {'_id': 0}).sort("msgId", -1).limit(limit))
+        messages = list(collection.find({}, {'_id': 0}).sort("msgId", -1).limit(limit))
+        messages = sorted(messages, key=lambda k: k['msgId'])
+        return messages
     else:
         return list(collection.find({}, {'_id': 0}))
 

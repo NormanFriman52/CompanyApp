@@ -19,8 +19,23 @@
             overflow-anchor: none;
         }
 
-        #scroller::-webkit-scrollbar {
-        {#display: none;#}
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        /* Track */
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        /* Handle */
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+        }
+
+        /* Handle on hover */
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
         }
 
         #anchor {
@@ -34,7 +49,7 @@
 
         .chat {
             overflow: scroll;
-            max-height: 600px;
+            max-height: 400px;
         }
 
         .message {
@@ -47,46 +62,52 @@
             word-break: break-word;
         }
 
+        body {
+            background: black;
+        }
+
     </style>
 {% endblock %}
 
 {% block content %}
     {{ render_navbar() }}
     <div id="app" v-cloak>
+        <div>
+            <div class="jumbotron mt-5 ml-5" style="width: 700px; height: 600px">
+                <div id="scroller" class="chat container">
+                    <div v-for="message in messages" class="message row">
 
-        <div class="jumbotron">
-            <div id="scroller" class="chat container">
-                <div v-for="message in messages" class="message row">
+                        <div v-if="message.from == user" class="col offset-md-3 message-box bg-info text-white">
+                            <p class="text-right">
+                                <span> [[ message['date'] ]] </span>
+                                <span class="font-weight-bold"> [[ message['from'] ]] </span>
+                            </p>
+                            <p class="text-right"> [[ message['body'] ]] </p>
+                        </div>
 
-                    <div v-if="message.from == user" class="col offset-md-4 message-box bg-info text-white">
-                        <p class="text-right">
-                            <span> [[ message['date'] ]] </span>
-                            <span class="font-weight-bold"> [[ message['from'] ]] </span>
-                        </p>
-                        <p class="text-right"> [[ message['body'] ]] </p>
+                        <div v-else class="col-9 message-box bg-dark text-white">
+                            <p>
+                                <span class="font-weight-bold"> [[ message['from'] ]] </span>
+                                <span> [[ message['date'] ]] </span>
+                            </p>
+                            <p> [[ message['body'] ]] </p>
+                        </div>
+
                     </div>
 
-                    <div v-else class="col-4 message-box bg-dark text-white">
-                        <p>
-                            <span class="font-weight-bold"> [[ message['from'] ]] </span>
-                            <span> [[ message['date'] ]] </span>
-                        </p>
-                        <p> [[ message['body'] ]] </p>
-                    </div>
-
+                    <div id="anchor"></div>
                 </div>
 
-                <div id="anchor"></div>
+                <form id="message_form">
+                    <dl>
+                        {{ message_form.csrf_token }}
+                        <input id="from" name="from" type="hidden" value='{{ session.username }}'/>
+                        {{ message_form.message(**{"class": "form-control","v-on:keydown.enter.prevent":"sendMsg()","autocomplete":"off"}) }}
+{#                        v-on="keydown:addCategory | key 'enter'"#}
+                    </dl>
+                    <a v-on:click="sendMsg()"  class="btn btn-primary" id="submit">SUBMIT</a>
+                </form>
             </div>
-
-            <form action={{ url_for('api.send') }} method="post" id="message_form">
-                <dl>
-                    {{ message_form.csrf_token }}
-                    <input id="from" name="from" type="hidden" value='{{ session.username }}'/>
-                    {{ message_form.message(**{"class": "form-control"}) }}
-                </dl>
-                <a href="#" v-on:click="sendMsg()" class="btn btn-primary">SUBMIT</a>
-            </form>
         </div>
     </div>
     <script>
@@ -108,6 +129,7 @@
                         .then(json => {
                             for (let message of json.messages) {
                                 if (!this.messagesIds.includes(message.msgId)) {
+                                    console.log(message)
                                     this.messagesIds.push(message.msgId)
                                     this.messages.push(message)
                                 }
@@ -155,6 +177,7 @@
             mounted() {
                 this.loadData();
                 const scroller = document.getElementById('scroller')
+                const enter = document.getElementById('scroller')
                 scroller.addEventListener('scroll', this.scrollOnTop)
                 this.intervalId = setInterval(() => this.loadData(), 500);
 

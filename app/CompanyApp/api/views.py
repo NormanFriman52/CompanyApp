@@ -48,7 +48,8 @@ def send():
             "from": payload.get("from"),
             "msgId": get_last_id() + 1
         }
-        insert_message(insert_msg)
+        if payload.get("message"):
+            insert_message(insert_msg)
         content = {
             "status": "OK"
         }
