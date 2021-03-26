@@ -20,7 +20,7 @@
         }
 
         #scroller::-webkit-scrollbar {
-            display: none;
+        {#display: none;#}
         }
 
         #anchor {
@@ -41,8 +41,10 @@
             margin: 0.5em;
             line-height: 1.1em;
         }
-        .message-box{
-            height: 60px;
+
+        .message-box {
+            min-height: 60px;
+            word-break: break-word;
         }
 
     </style>
@@ -55,20 +57,23 @@
         <div class="jumbotron">
             <div id="scroller" class="chat container">
                 <div v-for="message in messages" class="message row">
-                    <div v-if="message.from == user" class="col offset-md-4 message-box bg-info text-white" >
-                            <p class="text-right">
-                                <span> [[ message['date'] ]] </span>
-                                <span class="font-weight-bold"> [[ message['from'] ]] </span>
-                            </p>
-                            <p class="text-right pb-5 mb-3"> [[ message['body'] ]] </p>
+
+                    <div v-if="message.from == user" class="col offset-md-4 message-box bg-info text-white">
+                        <p class="text-right">
+                            <span> [[ message['date'] ]] </span>
+                            <span class="font-weight-bold"> [[ message['from'] ]] </span>
+                        </p>
+                        <p class="text-right"> [[ message['body'] ]] </p>
                     </div>
+
                     <div v-else class="col-4 message-box bg-dark text-white">
-                            <p>
-                                <span class="font-weight-bold"> [[ message['from'] ]] </span>
-                                <span> [[ message['date'] ]] </span>
-                            </p>
-                            <p> [[ message['body'] ]] </p>
+                        <p>
+                            <span class="font-weight-bold"> [[ message['from'] ]] </span>
+                            <span> [[ message['date'] ]] </span>
+                        </p>
+                        <p> [[ message['body'] ]] </p>
                     </div>
+
                 </div>
 
                 <div id="anchor"></div>
@@ -92,6 +97,7 @@
                 intervalId: null,
                 dataLoaded: false,
                 messages: [],
+                messagesIds: [],
                 scrolled: false,
                 user: "{{ session.username }}",
             }),
@@ -100,7 +106,12 @@
                     fetch("{{ url_for_api_messages }}")
                         .then(response => response.json())
                         .then(json => {
-                            this.messages = json.messages
+                            for (let message of json.messages) {
+                                if (!this.messagesIds.includes(message.msgId)) {
+                                    this.messagesIds.push(message.msgId)
+                                    this.messages.push(message)
+                                }
+                            }
                         });
                 },
                 sendMsg() {
@@ -120,11 +131,23 @@
                 },
                 scrollOnTop() {
                     const scroller = document.getElementById('scroller')
+                    const scrollHeight = scroller.scrollHeight
                     if (scroller.scrollTop == 0) {
-                        console.log("reached top")
+                        let last_id = Math.min(...this.messagesIds)
+                        fetch("{{ url_for_api_messages }}&lastId=" + last_id)
+                            .then(response => response.json())
+                            .then(json => {
+                                for (let message of json.messages) {
+                                    if (!this.messagesIds.includes(message.msgId)) {
+                                        this.messagesIds.push(message.msgId)
+                                        this.messages.unshift(message)
+                                    }
+                                }
+                            });
+
                     }
                 },
-                scrollToBottom(){
+                scrollToBottom() {
                     const scroller = document.getElementById('scroller')
                     scroller.scrollTop = scroller.scrollHeight
                 }

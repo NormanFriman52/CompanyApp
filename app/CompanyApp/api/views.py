@@ -24,6 +24,14 @@ def user():
 @api_bp.route("/main_board")
 def main_board():
     limit = request.args.get("limit")
+    last_id = request.args.get("lastId")
+    if last_id:
+        last_id = int(last_id)
+        if limit:
+            limit = int(limit)
+            return get_main_board_massages(limit=limit, last_id=last_id)
+
+        return get_main_board_massages(last_id=last_id)
     if limit:
         limit = int(limit)
         return get_main_board_massages(limit)

@@ -2,16 +2,17 @@ from CompanyApp.database import db
 import pymongo
 
 
-def get_messages(limit=None):
+def get_messages(limit=None, last_id=None):
     collection = db.get_collection("main_board")
+    if last_id:
+        if limit:
+            return list(collection.find({"msgId": {"$lt": last_id}}, {'_id': 0}).sort("msgId", -1).limit(limit))
+        else:
+            return list(collection.find({"msgId": {"$lt": last_id}}, {'_id': 0}).sort("msgId", -1))
     if limit:
-        messages = collection.find({}, {'_id': 0}).sort("msgId", -1).limit(limit)
+        return list(collection.find({}, {'_id': 0}).sort("msgId", -1).limit(limit))
     else:
-        messages = collection.find({}, {'_id': 0})
-    if messages:
-        return list(messages)
-    else:
-        return []
+        return list(collection.find({}, {'_id': 0}))
 
 
 def insert_message(message):
@@ -26,4 +27,5 @@ def get_last_id():
                                       sort=[('_id', pymongo.DESCENDING)])
 
     return last_record['msgId']
+
 
