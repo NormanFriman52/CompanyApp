@@ -44,6 +44,9 @@
             line-height: 1.1em;
             background-color: white;
         }
+        .message-box{
+            height: 50px;
+        }
 
     </style>
 {% endblock %}
@@ -56,18 +59,22 @@
             <div id="scroller" class="chat">
                 <div v-for="message in messages" class="message">
                     <div v-if="message.from == user">
-                        <p class="text-right">
-                            <span> [[ message['date'] ]] </span>
-                            <span class="font-weight-bold"> [[ message['from'] ]] </span>
-                        </p>
-                        <span style="float:right"> [[ message['body'] ]] </span>
+                        <div class="message-box">
+                            <p class="text-right">
+                                <span> [[ message['date'] ]] </span>
+                                <span class="font-weight-bold"> [[ message['from'] ]] </span>
+                            </p>
+                            <p style="float:right"> [[ message['body'] ]] </p>
+                        </div>
                     </div>
                     <div v-else>
-                        <p>
-                            <span class="font-weight-bold"> [[ message['from'] ]] </span>
-                            <span> [[ message['date'] ]] </span>
-                        </p>
-                        <span> [[ message['body'] ]] </span>
+                        <div class="message-box bg-primary text-white">
+                            <p>
+                                <span class="font-weight-bold"> [[ message['from'] ]] </span>
+                                <span> [[ message['date'] ]] </span>
+                            </p>
+                            <p> [[ message['body'] ]] </p>
+                        </div>
                     </div>
                 </div>
 

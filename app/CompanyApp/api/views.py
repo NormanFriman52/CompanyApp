@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, url_for, session, request, redirect, jsonify
 from CompanyApp.data_parser import *
-from CompanyApp.controllers.main_board_messages_controller import insert_message
+from CompanyApp.controllers.main_board_messages_controller import insert_message, get_last_id
 from CompanyApp.main_board.forms import MessageForm
 from datetime import datetime
 
@@ -34,7 +34,7 @@ def send():
             "body": payload.get("message"),
             "date": f'{datetime.now().strftime("%d/%m/%Y %H:%M:%S")}',
             "from": payload.get("from"),
-            "msgId": 3
+            "msgId": get_last_id()+1
         }
         insert_message(insert_msg)
         content = {
