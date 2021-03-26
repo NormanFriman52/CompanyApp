@@ -7,3 +7,9 @@ def check_credentials(username, password):
     if user:
         return user
     return {}
+
+
+def get_users():
+    collection = db.get_collection("users")
+    users = list(collection.find({}, {'_id': 0}))
+    return users

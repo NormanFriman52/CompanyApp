@@ -14,6 +14,12 @@
                 <li class="nav-item">
                     <a class="nav-link" href=" {{ url_for("authorization.login") }} ">Login</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href=" {{ url_for("api.index") }} ">API</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href=" {{ url_for("api.users") }} ">APIUsers</a>
+                </li>
                 {% if session['username'] %}
                     <li class="nav-item">
                         <a class="nav-link" href=" {{ url_for("authorization.logout") }} ">Logout</a>

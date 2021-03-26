@@ -8,12 +8,12 @@ api_bp = Blueprint("api", __name__, template_folder="templates")
 
 
 @api_bp.route("/")
-def api():
+def index():
     return 'api'
 
 
 @api_bp.route("/users")
-def user():
+def users():
     uid = request.args.get('uid')
     if uid:
         return get_single_user_params(uid)

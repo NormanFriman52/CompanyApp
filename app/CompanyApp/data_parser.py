@@ -1,4 +1,5 @@
 from CompanyApp.controllers.main_board_messages_controller import get_messages
+from CompanyApp.controllers.users_controller import get_users
 import json
 
 
@@ -12,7 +13,7 @@ def get_json(json_path):
 
 
 def get_users_params(parse=True):
-    users = get_json(r'C:\Users\kgolonka\Desktop\home\ChatApp\CompanyApp\app\CompanyApp\DB\user_structure.json')
+    users = get_users()
     if parse:
         return {"users": users}
     return users

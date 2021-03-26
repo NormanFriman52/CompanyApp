@@ -78,6 +78,12 @@
                     <button type="button" v-on:click="setChat('main_board')" class="btn btn-outline-dark mt-2">
                         Main Board
                     </button>
+                    <div v-for="user in users">
+                        <button v-on:click="setChat(user.username)" class="btn btn-outline-dark mt-2">
+                            [[ user.username ]]
+                        </button>
+                    </div>
+
                 </div>
                 <div class="col jumbotron mt-5 ml-5 " style="width: 700px; height: 600px">
                     <div id="scroller" class="chat container">
@@ -133,7 +139,6 @@
             }),
             methods: {
                 loadData() {
-                    console.log(this.scrolled)
                     if (this.chat) {
                         fetch(this.chat)
                             .then(response => response.json())
@@ -146,6 +151,17 @@
                                 }
                             });
                     }
+                },
+                fetchUsers() {
+                    fetch(" {{ url_for('api.users') }} ")
+                        .then(response => response.json())
+                        .then(json => {
+                            for (let user of json.users) {
+                                if (user.username != "{{ session['username'] }}") {
+                                    this.users.push(user)
+                                }
+                            }
+                        });
                 },
                 sendMsg() {
                     const message = document.getElementById('message')
@@ -192,6 +208,7 @@
             },
             mounted() {
                 this.loadData();
+                this.fetchUsers();
                 const scroller = document.getElementById('scroller')
                 const enter = document.getElementById('scroller')
                 scroller.addEventListener('scroll', this.scrollOnTop)
