@@ -1,0 +1,18 @@
+[
+  { "participants": ["json","kamil"],
+    "messages": [
+      {
+        "from": "json",
+        "date": "24.03.2021",
+        "body": "I will write this test",
+        "msgId": 1
+      },
+      {
+        "from": "json",
+        "date": "24.03.2021",
+        "body": "I am fine",
+        "msgId": 3
+      }
+    ]
+  }
+]

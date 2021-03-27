@@ -40,10 +40,23 @@ def main_board():
 
 @api_bp.route("/chat_rooms")
 def chat_rooms():
-    chat_room_between = [request.args.get("friend"), request.args.get("user")]
-    chat_room_between.sort()
-    print(chat_room_between)
-    return {"messages": []}
+    participants = [request.args.get("friend"), request.args.get("user")]
+    if None in participants:
+        return {}
+    limit = request.args.get("limit")
+    last_id = request.args.get("lastId")
+    participants.sort()
+    if last_id:
+        last_id = int(last_id)
+        if limit:
+            limit = int(limit)
+            return get_chat_room_messages(participants, limit=limit, last_id=last_id)
+
+        return get_chat_room_messages(participants, last_id=last_id)
+    if limit:
+        limit = int(limit)
+        return get_chat_room_messages(participants, limit)
+    return get_chat_room_messages(participants)
 
 
 @api_bp.route("/main_board/send", methods=["POST"])
