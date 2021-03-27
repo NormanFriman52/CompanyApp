@@ -1,5 +1,5 @@
 from CompanyApp.database import db
-import pymongo
+from pymongo import DESCENDING
 
 
 def get_messages(limit=None, last_id=None):
@@ -26,7 +26,7 @@ def get_last_id():
     collection = db.get_collection("main_board")
     collection.find_one()
     last_record = collection.find_one({}, {"_id": False, 'body': False, 'date': False, 'from': False},
-                                      sort=[('_id', pymongo.DESCENDING)])
+                                      sort=[('_id', DESCENDING)])
 
     return last_record['msgId']
 

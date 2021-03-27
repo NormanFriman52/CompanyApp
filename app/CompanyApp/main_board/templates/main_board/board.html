@@ -136,6 +136,7 @@
                 chat: "",
                 users: [],
                 user: "{{ session.username }}",
+                sendUrl: ""
             }),
             methods: {
                 loadData() {
@@ -167,7 +168,7 @@
                     const message = document.getElementById('message')
                     const from = document.getElementById('from').value
                     axios
-                        .post('{{ url_for('api.send') }}', {
+                        .post(this.sendUrl, {
                             message: message.value,
                             from: from
                         })
@@ -181,9 +182,9 @@
                 scrollOnTop() {
                     const scroller = document.getElementById('scroller')
                     const scrollHeight = scroller.scrollHeight
-                    if (scroller.scrollTop == 0) {
+                    if (scroller.scrollTop == 0 && this.messagesIds.length) {
                         let last_id = Math.min(...this.messagesIds)
-                        fetch("{{ url_for_api_messages }}&lastId=" + last_id)
+                        fetch(this.chat+"&lastId=" + last_id)
                             .then(response => response.json())
                             .then(json => {
                                 for (let message of json.messages) {
@@ -201,16 +202,21 @@
                     scroller.scrollTop = scroller.scrollHeight
                 },
                 setChat(chat) {
+                    this.messages =  []
+                    this.messagesIds = []
                     if (chat === "main_board") {
-                        this.chat = "{{ url_for_api_messages }}"
+                        this.chat = "{{ url_for_api_messages }}" + "?limit=" + "{{ limit }}"
+                        this.sendUrl = '{{ url_for('api.send') }}'
                         this.scrolled = false
                     }
                     else{
                         this.changeRoom(chat,"{{ session.username }}")
                     }
+                    this.loadData();
                 },
                 changeRoom(friend, user){
-                    this.chat = "{{ url_for('api.chat_rooms') }}?" +"friend=" + friend + "&user=" + user
+                    this.chat = "{{ url_for('api.chat_rooms') }}?" +"friend=" + friend + "&user=" + user + "&limit=" + "{{ limit }}"
+                    this.sendUrl = "{{ url_for('api.send') }}?" +"friend=" + friend + "&user=" + user
                 }
             },
             mounted() {
@@ -219,7 +225,7 @@
                 const scroller = document.getElementById('scroller')
                 const enter = document.getElementById('scroller')
                 scroller.addEventListener('scroll', this.scrollOnTop)
-                this.intervalId = setInterval(() => this.loadData(), 500);
+                this.intervalId = setInterval(() => this.loadData(), 2000);
 
             },
             updated() {
