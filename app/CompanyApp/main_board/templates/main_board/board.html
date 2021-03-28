@@ -11,6 +11,7 @@
     <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
 
     <style>
@@ -29,19 +30,33 @@
             <div class="row">
                 <div class="col-3">
                     <v-card
-                            class="mt-4"
+                            class="mt-4 chat-users-box"
                             max-width="300"
                             tile
                     >
+                        <v-toolbar dense>
+                            <v-toolbar-title>Chats</v-toolbar-title>
+
+                            <v-spacer></v-spacer>
+
+                        </v-toolbar>
                         <v-list two-line v-if="'{{ session.username }}'">
-                            <v-subheader>Users</v-subheader>
-                            <button type="button" v-on:click="setChat('main_board')" class="btn btn-outline-dark mt-2">
-                                Main Board
-                            </button>
+
+
                             <v-list-item-group
                                     v-model="selectedItem"
                                     color="primary"
                             >
+                                <v-list-item
+                                        v-on:click="setChat('main_board')"
+                                >
+                                    <span class="dot bg-success text-white">All</span>
+                                    </v-avatar>
+                                    <v-list-item-content>
+                                        <v-list-item-title v-text="'Company chat'"></v-list-item-title>
+                                    </v-list-item-content>
+                                </v-list-item>
+
                                 <v-list-item
                                         v-for="(user, i) in users"
                                         :key="i"
@@ -52,7 +67,7 @@
 
                                     <v-list-item-content>
                                         <v-list-item-title v-text="user.name + ' ' +user.surname"></v-list-item-title>
-                                        <span>[[ usersLastMsg[user.username] ]]</span>
+                                        <span class="last-message">[[ usersLastMsg[user.username] ]]</span>
                                     </v-list-item-content>
                                 </v-list-item>
                             </v-list-item-group>
@@ -60,11 +75,12 @@
                     </v-card>
                 </div>
 
-                <div class="col jumbotron mt-5" style="width: 700px; height: 600px">
+                <div class="col jumbotron mt-5 mr-4" style="width: 700px; height: 600px">
                     <div id="scroller" class="chat container">
                         <div v-for="message in messages" class="message row">
 
-                            <div v-if="message.from == user" class="col offset-md-3 message-box bg-info text-white">
+                            <div v-if="message.from == user" style="margin-left: 20%"
+                                 class="col message-box bg-info text-white">
                                 <p class="text-right">
                                     <span> [[ message['date'] ]] </span>
                                     <span class="font-weight-bold"> [[ message['from'] ]] </span>
@@ -85,13 +101,17 @@
                         <div id="anchor"></div>
                     </div>
 
-                    <form id="message_form" v-if="chat">
-                        <dl>
+                    <form id="message_form" v-if="chat" class="chat-form-box">
+                        <dl class="input-message">
                             {{ message_form.csrf_token }}
                             <input id="from" name="from" type="hidden" value='{{ session.username }}'/>
-                            {{ message_form.message(**{"class": "form-control","v-on:keydown.enter.prevent":"sendMsg()","autocomplete":"off"}) }}
+                            {{ message_form.message(**{"class":"form-control","v-on:keydown.enter.prevent":"sendMsg()","autocomplete":"off"}) }}
                         </dl>
-                        <a v-on:click="sendMsg()" class="btn btn-primary" id="submit">SUBMIT</a>
+                        <a v-on:click="sendMsg()" class="input-message-submit btn btn-primary" id="submit">
+                            <v-icon small>
+                                mdi-send
+                            </v-icon>
+                        </a>
                     </form>
                 </div>
             </div>
@@ -106,6 +126,7 @@
         const app = new Vue({
             el: "#app",
             delimiters: ['[[', ']]'],
+            vuetify: new Vuetify(),
             data: () => ({
                 intervalId: null,
                 intervalLastMsgId: null,
@@ -193,14 +214,15 @@
                     }
                 },
                 scrollToBottom() {
-                    let container = this.$el.querySelector("#scroller")
-                    if (container.scrollTop==0) {
-                        $('#scroller').scrollTop($('#scroller div:nth-child(10)').position().top);
-                    } else {
-                        container.scrollTop = container.scrollHeight;
+                    try {
+                        let container = this.$el.querySelector("#scroller")
+                        if (container.scrollTop == 0) {
+                            $('#scroller').scrollTop($('#scroller div:nth-child(11)').position().top);
+                        } else {
+                            container.scrollTop = container.scrollHeight;
+                        }
+                    } catch (error) {
                     }
-
-
                 },
                 setChat(chat) {
                     this.scrollNotForScroll = false

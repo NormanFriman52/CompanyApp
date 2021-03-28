@@ -36,17 +36,42 @@ body {
 }
 
 .chat {
-    overflow: scroll;
+    overflow-y: scroll;
+    overflow-x: hidden;
     max-height: 400px;
 }
 
 .message {
     line-height: 1.1em;
 }
-.v-list{
+
+.chat-users-box {
     height: 80%;
-    width: 300px;
 }
+
+.chat-form-box {
+    position: absolute;
+    width: 98%;
+    bottom: 20px;
+}
+.input-message{
+    width: 95%;
+    display: inline-block;
+
+}
+.input-message-submit{
+    display: inline-block;
+    width: 4%;
+}
+
+.last-message {
+    display: block;
+    width: 100px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
 .message-box {
     min-height: 30px;
     word-break: break-word;
