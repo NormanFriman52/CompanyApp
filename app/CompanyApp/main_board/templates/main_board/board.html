@@ -8,63 +8,16 @@
 
 {% block head %}
     <meta charset="utf-8">
-    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+
     <style>
         [v-cloak] {
             display: none;
         }
 
-        #scroller * {
-            overflow-anchor: none;
-        }
-
-        ::-webkit-scrollbar {
-            width: 10px;
-        }
-
-        /* Track */
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-
-        /* Handle */
-        ::-webkit-scrollbar-thumb {
-            background: #888;
-        }
-
-        /* Handle on hover */
-        ::-webkit-scrollbar-thumb:hover {
-            background: #555;
-        }
-
-        #anchor {
-            overflow-anchor: auto;
-            height: 1px;
-        }
-
-        :root {
-            font-family: sans-serif;
-        }
-
-        .chat {
-            overflow: scroll;
-            max-height: 400px;
-        }
-
-        .message {
-            margin: 0.5em;
-            line-height: 1.1em;
-        }
-
-        .message-box {
-            min-height: 60px;
-            word-break: break-word;
-        }
-
-        body {
-            background: black;
-        }
 
     </style>
 {% endblock %}
@@ -74,18 +27,40 @@
     <div id="app" v-cloak>
         <div class="container-fluid">
             <div class="row">
-                <div class="col-2 ml-2 mt-5 card">
-                    <button type="button" v-on:click="setChat('main_board')" class="btn btn-outline-dark mt-2">
-                        Main Board
-                    </button>
-                    <div v-for="user in users">
-                        <button v-on:click="setChat(user.username)" class="btn btn-outline-dark mt-2">
-                            [[ user.username ]]
-                        </button>
-                    </div>
+                <div class="col-3">
+                    <v-card
+                            class="mt-4"
+                            max-width="300"
+                            tile
+                    >
+                        <v-list two-line v-if="'{{ session.username }}'">
+                            <v-subheader>Users</v-subheader>
+                            <button type="button" v-on:click="setChat('main_board')" class="btn btn-outline-dark mt-2">
+                                Main Board
+                            </button>
+                            <v-list-item-group
+                                    v-model="selectedItem"
+                                    color="primary"
+                            >
+                                <v-list-item
+                                        v-for="(user, i) in users"
+                                        :key="i"
+                                        v-on:click="setChat(user.username)"
+                                >
+                                    <span class="dot bg-dark text-white">[[ user.name[0] ]] [[ user.surname[0] ]] </span>
+                                    </v-avatar>
 
+                                    <v-list-item-content>
+                                        <v-list-item-title v-text="user.name + ' ' +user.surname"></v-list-item-title>
+                                        <span>[[ usersLastMsg[user.username] ]]</span>
+                                    </v-list-item-content>
+                                </v-list-item>
+                            </v-list-item-group>
+                        </v-list>
+                    </v-card>
                 </div>
-                <div class="col jumbotron mt-5 ml-5 " style="width: 700px; height: 600px">
+
+                <div class="col jumbotron mt-5" style="width: 700px; height: 600px">
                     <div id="scroller" class="chat container">
                         <div v-for="message in messages" class="message row">
 
@@ -123,32 +98,53 @@
         </div>
     </div>
     </div>
+
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
     <script>
         const app = new Vue({
             el: "#app",
             delimiters: ['[[', ']]'],
             data: () => ({
                 intervalId: null,
-                dataLoaded: false,
+                intervalLastMsgId: null,
                 messages: [],
                 messagesIds: [],
-                scrolled: false,
-                chat: "",
+                chat: "{{ url_for_api_messages }}" + "?limit=" + "{{ limit }}",
                 users: [],
+                usersLastMsg: {},
                 user: "{{ session.username }}",
-                sendUrl: ""
+                sendUrl: "",
+                selectedItem: "",
+                scrollNotForScroll: false,
+                items: [
+                    {text: 'Real-Time', icon: 'mdi-clock'},
+                    {text: 'Audience', icon: 'mdi-account'},
+                    {text: 'Conversions', icon: 'mdi-flag'},
+                ],
             }),
             methods: {
                 loadData() {
-                    if (this.chat) {
-                        fetch(this.chat)
+                    fetch(this.chat)
+                        .then(response => response.json())
+                        .then(json => {
+                            for (let message of json.messages) {
+                                if (!this.messagesIds.includes(message.msgId)) {
+                                    this.messagesIds.push(message.msgId)
+                                    this.messages.push(message)
+                                }
+                            }
+                        });
+                },
+                loadLastMsgs() {
+                    for (let friend of this.users) {
+                        let fetch_url = "{{ url_for('api.chat_rooms') }}?" + "friend=" + friend.username + "&user=" + this.user + "&limit=1"
+                        fetch(fetch_url)
                             .then(response => response.json())
                             .then(json => {
                                 for (let message of json.messages) {
-                                    if (!this.messagesIds.includes(message.msgId)) {
-                                        this.messagesIds.push(message.msgId)
-                                        this.messages.push(message)
-                                    }
+                                    this.usersLastMsg[friend.username] = message.body
                                 }
                             });
                     }
@@ -158,8 +154,9 @@
                         .then(response => response.json())
                         .then(json => {
                             for (let user of json.users) {
-                                if (user.username != "{{ session['username'] }}") {
+                                if (user.username !== "{{ session['username'] }}") {
                                     this.users.push(user)
+                                    this.usersLastMsg[user.username] = ""
                                 }
                             }
                         });
@@ -176,15 +173,13 @@
                         }, (error) => {
                             console.log(error);
                         });
-                    this.scrollToBottom()
                     message.value = ""
                 },
                 scrollOnTop() {
                     const scroller = document.getElementById('scroller')
-                    const scrollHeight = scroller.scrollHeight
                     if (scroller.scrollTop == 0 && this.messagesIds.length) {
                         let last_id = Math.min(...this.messagesIds)
-                        fetch(this.chat+"&lastId=" + last_id)
+                        fetch(this.chat + "&lastId=" + last_id)
                             .then(response => response.json())
                             .then(json => {
                                 for (let message of json.messages) {
@@ -197,43 +192,45 @@
 
                     }
                 },
-                scrollToBottom() {
-                    const scroller = document.getElementById('scroller')
-                    scroller.scrollTop = scroller.scrollHeight
+                scrollToBottom(to_bottom) {
+                    let container = this.$el.querySelector("#scroller")
+                    if (!to_bottom) {
+                        $('#scroller').scrollTop($('#scroller div:nth-child(10)').position().top);
+                    } else {
+                        container.scrollTop = container.scrollHeight;
+                    }
+
+
                 },
                 setChat(chat) {
-                    this.messages =  []
+                    this.scrollNotForScroll = false
+                    this.messages = []
                     this.messagesIds = []
                     if (chat === "main_board") {
                         this.chat = "{{ url_for_api_messages }}" + "?limit=" + "{{ limit }}"
                         this.sendUrl = '{{ url_for('api.send') }}'
-                        this.scrolled = false
-                    }
-                    else{
-                        this.changeRoom(chat,"{{ session.username }}")
+                    } else {
+                        this.changeRoom(chat)
                     }
                     this.loadData();
                 },
-                changeRoom(friend, user){
-                    this.chat = "{{ url_for('api.chat_rooms') }}?" +"friend=" + friend + "&user=" + user + "&limit=" + "{{ limit }}"
-                    this.sendUrl = "{{ url_for('api.send') }}?" +"friend=" + friend + "&user=" + user
+                changeRoom(friend) {
+                    this.chat = "{{ url_for('api.chat_rooms') }}?" + "friend=" + friend + "&user=" + this.user + "&limit=" + "{{ limit }}"
+                    this.sendUrl = "{{ url_for('api.send') }}?" + "friend=" + friend + "&user=" + this.user
                 }
             },
             mounted() {
-                this.loadData();
                 this.fetchUsers();
+                this.loadData();
+                this.loadLastMsgs();
                 const scroller = document.getElementById('scroller')
-                const enter = document.getElementById('scroller')
                 scroller.addEventListener('scroll', this.scrollOnTop)
                 this.intervalId = setInterval(() => this.loadData(), 2000);
+                this.intervalLastMsgId = setInterval(() => this.loadLastMsgs(), 2000);
 
             },
             updated() {
-                if (!this.scrolled) {
-                    this.scrollToBottom()
-                    this.scrolled = true
-                }
-
+                this.$nextTick(() => this.scrollToBottom(false))
             },
             beforeDestroy() {
                 clearInterval(this.intervalId);

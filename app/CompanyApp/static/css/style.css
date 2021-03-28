@@ -1,0 +1,64 @@
+
+body {
+    background: black;
+}
+
+#scroller * {
+    overflow-anchor: none;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+#anchor {
+    overflow-anchor: auto;
+    height: 1px;
+}
+
+:root {
+    font-family: sans-serif;
+}
+
+.chat {
+    overflow: scroll;
+    max-height: 400px;
+}
+
+.message {
+    line-height: 1.1em;
+}
+.v-list{
+    height: 80%;
+    width: 300px;
+}
+.message-box {
+    min-height: 30px;
+    word-break: break-word;
+    margin: 0.2em;
+}
+
+.dot {
+    height: 46px;
+    width: 46px;
+    text-align: center;
+    border-radius: 50%;
+    display: inline-block;
+    padding-top: 10px;
+    margin-right: 4px;
+}
