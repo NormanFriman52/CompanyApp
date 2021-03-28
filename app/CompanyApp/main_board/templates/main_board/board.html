@@ -192,9 +192,9 @@
 
                     }
                 },
-                scrollToBottom(to_bottom) {
+                scrollToBottom() {
                     let container = this.$el.querySelector("#scroller")
-                    if (!to_bottom) {
+                    if (container.scrollTop==0) {
                         $('#scroller').scrollTop($('#scroller div:nth-child(10)').position().top);
                     } else {
                         container.scrollTop = container.scrollHeight;
@@ -230,7 +230,7 @@
 
             },
             updated() {
-                this.$nextTick(() => this.scrollToBottom(false))
+                this.$nextTick(() => this.scrollToBottom())
             },
             beforeDestroy() {
                 clearInterval(this.intervalId);
