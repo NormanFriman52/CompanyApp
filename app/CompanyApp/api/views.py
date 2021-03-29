@@ -1,8 +1,11 @@
-from flask import Blueprint, render_template, url_for, session, request, redirect, jsonify
+import os
+from datetime import datetime
+from flask import Blueprint, render_template, flash, url_for, session, request, redirect, jsonify, send_from_directory
+from werkzeug.utils import secure_filename
+from CompanyApp.config import *
 from CompanyApp.data_parser import *
 from CompanyApp.controllers.main_board_messages_controller import insert_message, get_last_id
 from CompanyApp.controllers.chat_rooms_controller import insert_message_to_room, get_last_msg_id_from_room
-from datetime import datetime
 
 api_bp = Blueprint("api", __name__, template_folder="templates")
 
@@ -67,6 +70,7 @@ def send():
             "body": payload.get("message"),
             "date": f'{datetime.now().strftime("%d/%m/%Y %H:%M:%S")}',
             "from": payload.get("from"),
+            "attachment": False
         }
         if request.args.get("friend") and request.args.get("user"):
             participants = [request.args.get("friend"), request.args.get("user")]
@@ -78,3 +82,46 @@ def send():
             insert_msg["msgId"] = get_last_id() + 1
             insert_message(insert_msg)
         return {}
+
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+@api_bp.route('/upload', methods=['GET', 'POST'])
+def upload_file():
+    user = request.args.get("user")
+    friend = request.args.get("friend")
+    if request.method == 'POST':
+        # check if the post request has the file part
+        if 'file' not in request.files:
+            flash('No file part')
+            return redirect(request.url)
+        file = request.files['file']
+        if file.filename == '':
+            flash('No selected file')
+            return redirect(request.url)
+        if file and allowed_file(file.filename):
+            if user and friend:
+                filename = secure_filename(file.filename)
+                file.save(os.path.join(UPLOAD_FOLDER, filename))
+                insert_msg = {
+                    "body": filename,
+                    "date": f'{datetime.now().strftime("%d/%m/%Y %H:%M:%S")}',
+                    "from": user,
+                    "attachment": {"type": file.filename.rsplit('.', 1)[1].lower(),
+                                   "file_name": file.filename.rsplit('.', 1)[0]}
+                }
+                participants = [friend, user]
+                participants.sort()
+                last_id = get_last_msg_id_from_room(participants)
+                insert_msg["msgId"] = last_id
+                insert_message_to_room(participants, last_id, insert_msg)
+
+            return redirect(url_for('main_board.index'))
+
+
+@api_bp.route('/uploads/<filename>')
+def uploaded_file(filename):
+    return send_from_directory(UPLOAD_FOLDER, filename)

@@ -4,14 +4,19 @@
       {
         "from": "json",
         "date": "24.03.2021",
-        "body": "I will write this test",
-        "msgId": 1
+        "body": "",
+        "msgId": 1,
+        "attachment": {
+          "type": "png",
+          "file_name": "maz"
+        }
       },
       {
         "from": "json",
         "date": "24.03.2021",
         "body": "I am fine",
-        "msgId": 3
+        "msgId": 3,
+        "attachment": {}
       }
     ]
   }
