@@ -121,7 +121,7 @@ def upload_file():
 
             return redirect(url_for('main_board.index'))
 
-
+@api_bp.route('/uploads/')
 @api_bp.route('/uploads/<filename>')
-def uploaded_file(filename):
+def uploaded_file(filename=None):
     return send_from_directory(UPLOAD_FOLDER, filename)
