@@ -38,6 +38,8 @@
                         <v-card
                                 class="mt-4 chat-users-box"
                                 max-width="300"
+                                max-height="80%"
+                                expand
                                 tile
                         >
                             <v-toolbar dense>
@@ -46,12 +48,15 @@
                                 <v-spacer></v-spacer>
 
                             </v-toolbar>
-                            <v-list two-line v-if="'{{ session.username }}'">
+                            <v-list style="max-height: 100%"
+                                    class="overflow-y-auto"
+                                    two-line v-if="'{{ session.username }}'">
 
 
                                 <v-list-item-group
                                         v-model="selectedItem"
                                         color="primary"
+                                        class="overflow-y-auto"
                                 >
                                     <v-list-item
                                             v-on:click="setChat('main_board')"
@@ -68,7 +73,29 @@
                                             :key="i"
                                             v-on:click="setChat(user.username)"
                                     >
-                                        <span class="dot bg-dark text-white">[[ user.name[0] ]] [[ user.surname[0] ]] </span>
+                                        <v-badge
+                                                v-if="user.state.available"
+                                                bordered
+                                                top
+                                                color="green darken-2"
+                                                dot
+                                                offset-x="10"
+                                                offset-y="10"
+                                        >
+                                            <span class="dot bg-dark text-white">[[ user.name[0] ]] [[ user.surname[0] ]] </span>
+                                        </v-badge>
+                                        <v-badge
+                                                v-else
+                                                bordered
+                                                top
+                                                color="blue-grey lighten-4"
+                                                dot
+                                                offset-x="10"
+                                                offset-y="10"
+                                        >
+                                            <span class="dot bg-dark text-white">[[ user.name[0] ]] [[ user.surname[0] ]] </span>
+                                        </v-badge>
+
                                         </v-avatar>
 
                                         <v-list-item-content>
@@ -82,8 +109,11 @@
                         </v-card>
                     </div>
 
-                    <div class="col jumbotron mt-5 mr-4" style="width: 700px; height: 700px">
-                        <div id="scroller" class="chat container">
+                    <div class="col jumbotron mt-10 mr-10" style="width: 700px; height: 700px">
+                        <div class="card-header chat-header" v-if="chat">
+                            [[ friend ]]
+                        </div>
+                        <div id="scroller" class="chat container mt-2">
                             <div v-for="message in messages" class="message row">
 
                                 <div v-if="message.from == user" style="margin-left: 20%;"
@@ -378,6 +408,7 @@
                         this.sendUrl = '{{ url_for('api.send') }}'
                         this.sendFileUrl = '{{ url_for('api.upload_file') }}?user=' + this.user
                         this.getFileUrl = '{{ url_for('api.uploaded_file') }}' + 'main'
+                        this.friend = "Company chat"
 
                     } else {
                         this.changeRoom(chat)

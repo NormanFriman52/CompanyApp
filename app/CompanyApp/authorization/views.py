@@ -1,13 +1,14 @@
 from flask import Blueprint, render_template, flash, redirect, session, request, url_for
 from .forms import LoginForm
-from CompanyApp.controllers.users_controller import check_credentials
+from CompanyApp.controllers.users_controller import check_credentials, set_user_status
 
 authorization_bp = Blueprint("authorization", __name__, template_folder="templates")
 
 
 @authorization_bp.route("/logout")
 def logout():
-    session.pop('username',None)
+    set_user_status(session.get('username'), False)
+    session.pop('username', None)
     return redirect(url_for("main_board.index"))
 
 
@@ -24,6 +25,7 @@ def login():
         user = check_credentials(username, password)
         if user:
             session["username"] = username
+            set_user_status(username, True)
             flash(f"You have successfully logged in as {session.get('username')}.", "success")
         else:
             flash(f"Bad {session.get('username')}.", "success")
