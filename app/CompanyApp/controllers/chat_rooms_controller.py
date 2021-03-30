@@ -1,4 +1,6 @@
+import os
 from CompanyApp.database import db
+from CompanyApp.config import UPLOAD_FOLDER
 from pymongo import DESCENDING
 
 
@@ -14,6 +16,7 @@ def get_room_messages(participants, limit=None, last_id=None):
     collection = db.get_collection("chat_rooms")
     room = collection.find_one({"participants": participants}, {"_id": 0, })
     if not room:
+        create_uploads_directory(participants)
         collection.insert_one({"participants": participants, "lastMsgId": 1, "messages": []})
     messages = sorted(room['messages'], key=lambda k: k['msgId'], reverse=True)
 
@@ -39,3 +42,9 @@ def get_last_msg_id_from_room(participants):
     room_info = collection.find_one({'participants': participants}, {"messages": 0, "_id": 0})
     last_msg_id = room_info['lastMsgId']
     return last_msg_id
+
+
+def create_uploads_directory(participants):
+    directory = participants[0] + '_'+participants[1]
+    path = os.path.join(UPLOAD_FOLDER, directory)
+    os.makedirs(path)

@@ -1,4 +1,6 @@
 import os
+import string
+import random
 from datetime import datetime
 from flask import Blueprint, render_template, flash, url_for, session, request, redirect, jsonify, send_from_directory
 from werkzeug.utils import secure_filename
@@ -94,7 +96,6 @@ def upload_file():
     user = request.args.get("user")
     friend = request.args.get("friend")
     if request.method == 'POST':
-        # check if the post request has the file part
         if 'file' not in request.files:
             flash('No file part')
             return redirect(request.url)
@@ -104,24 +105,40 @@ def upload_file():
             return redirect(request.url)
         if file and allowed_file(file.filename):
             if user and friend:
-                filename = secure_filename(file.filename)
-                file.save(os.path.join(UPLOAD_FOLDER, filename))
-                insert_msg = {
-                    "body": filename,
-                    "date": f'{datetime.now().strftime("%d/%m/%Y %H:%M:%S")}',
-                    "from": user,
-                    "attachment": {"type": file.filename.rsplit('.', 1)[1].lower(),
-                                   "file_name": file.filename.rsplit('.', 1)[0]}
-                }
                 participants = [friend, user]
                 participants.sort()
+                storage_directory = participants[0] + "_" + participants[1]
+                storage_directory = (os.path.join(UPLOAD_FOLDER, storage_directory))
+                filename = id_generator()
+                body = file.filename
                 last_id = get_last_msg_id_from_room(participants)
-                insert_msg["msgId"] = last_id
+
+                file_type = file.filename.rsplit('.', 1)[1].lower()
+                file.save(os.path.join(storage_directory, filename + '.' + file_type))
+
+                insert_msg = {
+                    "body": body,
+                    "date": f'{datetime.now().strftime("%d/%m/%Y %H:%M:%S")}',
+                    "from": user,
+                    "attachment": {"type": file_type,
+                                   "file_name": filename},
+                    "msgId": last_id
+                }
                 insert_message_to_room(participants, last_id, insert_msg)
 
             return redirect(url_for('main_board.index'))
 
+
+def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
+    return ''.join(random.choice(chars) for _ in range(size))
+
+
 @api_bp.route('/uploads/')
 @api_bp.route('/uploads/<filename>')
-def uploaded_file(filename=None):
-    return send_from_directory(UPLOAD_FOLDER, filename)
+@api_bp.route('/uploads/<path>/<filename>')
+def uploaded_file(filename=None, path=None):
+    if path:
+        directory = os.path.join(UPLOAD_FOLDER, path)
+    else:
+        directory = UPLOAD_FOLDER
+    return send_from_directory(directory, filename)
