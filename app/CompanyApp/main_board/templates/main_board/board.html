@@ -129,13 +129,39 @@
                                         </div>
                                     </div>
                                     <div v-else>
-                                        <p class="text-right"> [[ message['body'] ]] </p>
+                                        <p> [[ message['body'] ]] </p>
                                     </div>
                                 </div>
 
                             </div>
 
                             <div id="anchor"></div>
+                        </div>
+                        <div v-if="!chat" class="mt-5">
+                            <v-timeline
+                                    :dense="$vuetify.breakpoint.smAndDown"
+                            >
+                                <v-timeline-item
+                                        v-for="(item, i) in items"
+                                        :key="i"
+                                        :color="item.color"
+                                        :icon="item.icon"
+                                        fill-dot
+                                >
+                                    <v-card
+                                            :color="item.color"
+                                            dark
+                                    >
+                                        <v-card-title class="title">
+                                            [[ item.title ]]
+                                        </v-card-title>
+                                        <v-card-text class="white text--primary">
+                                            <br>
+                                            <h6>[[ item.text ]]</h6>
+                                        </v-card-text>
+                                    </v-card>
+                                </v-timeline-item>
+                            </v-timeline>
                         </div>
 
                         <form id="message_form" v-if="chat" class="chat-form-box">
@@ -151,7 +177,7 @@
                             </a>
                         </form>
 
-                        <div class="chat-form-buttons">
+                        <div class="chat-form-buttons " v-if="chat">
                             <v-dialog v-model="dialog" width="800">
                                 <template v-slot:activator="{ on, attrs }">
                                     <v-btn color="red lighten-2" dark v-bind="attrs" v-on="on" small>
@@ -211,7 +237,7 @@
                 intervalLastMsgId: null,
                 messages: [],
                 messagesIds: [],
-                chat: "{{ url_for_api_messages }}" + "?limit=" + "{{ limit }}",
+                chat: "",
                 dialog: false,
                 users: [],
                 usersLastMsg: {},
@@ -223,23 +249,44 @@
                 selectedItem: "",
                 scrollNotForScroll: false,
                 items: [
-                    {text: 'Real-Time', icon: 'mdi-clock'},
-                    {text: 'Audience', icon: 'mdi-account'},
-                    {text: 'Conversions', icon: 'mdi-flag'},
+                    {
+                        color: 'blue lighten-1',
+                        icon: 'mdi-account-multiple-plus',
+                        title: 'Choose chat',
+                        text: 'Choose colleague, or main chat from the chats card on the left.'
+                    },
+                    {
+                        color: 'grey darken-3',
+                        icon: 'mdi-chat-outline',
+                        title: 'Start chatting',
+                        text: 'Start conversation with your co-workers.'
+
+                    },
+                    {
+                        color: 'green lighten-1',
+                        icon: 'mdi-check',
+                        title: 'Make communication easier',
+                        text: 'Enjoy application which makes everything easier.'
+                    },
+
                 ],
             }),
             methods: {
                 loadData() {
-                    fetch(this.chat)
-                        .then(response => response.json())
-                        .then(json => {
-                            for (let message of json.messages) {
-                                if (!this.messagesIds.includes(message.msgId)) {
-                                    this.messagesIds.push(message.msgId)
-                                    this.messages.push(message)
+                    try {
+                        fetch(this.chat)
+                            .then(response => response.json())
+                            .then(json => {
+                                for (let message of json.messages) {
+                                    if (!this.messagesIds.includes(message.msgId)) {
+                                        this.messagesIds.push(message.msgId)
+                                        this.messages.push(message)
+                                    }
                                 }
-                            }
-                        });
+                            });
+                    } catch (error) {
+
+                    }
 
                 },
                 loadLastMsgs() {
@@ -330,7 +377,7 @@
                         this.chat = "{{ url_for_api_messages }}" + "?limit=" + "{{ limit }}"
                         this.sendUrl = '{{ url_for('api.send') }}'
                         this.sendFileUrl = '{{ url_for('api.upload_file') }}?user=' + this.user
-                        this.getFileUrl = '{{ url_for('api.uploaded_file') }}'+ 'main'
+                        this.getFileUrl = '{{ url_for('api.uploaded_file') }}' + 'main'
 
                     } else {
                         this.changeRoom(chat)
@@ -344,10 +391,10 @@
                     this.sendFileUrl = '{{ url_for('api.upload_file') }}?user=' + this.user + '&friend=' + this.friend
                     let participants = new Array(this.user, this.friend)
                     participants = participants.sort()
-                    this.getFileUrl = '{{ url_for('api.uploaded_file') }}'+ participants[0] + '_' + participants[1]
+                    this.getFileUrl = '{{ url_for('api.uploaded_file') }}' + participants[0] + '_' + participants[1]
                 },
                 getFilePath(message) {
-                    let path = this.getFileUrl + '/'+ message.attachment.file_name + '.' + message.attachment.type
+                    let path = this.getFileUrl + '/' + message.attachment.file_name + '.' + message.attachment.type
                     return path
                 }
             },

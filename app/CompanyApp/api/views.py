@@ -77,7 +77,7 @@ def send():
         if request.args.get("friend") and request.args.get("user"):
             participants = [request.args.get("friend"), request.args.get("user")]
             participants.sort()
-            last_id = get_last_msg_id_from_room(participants)
+            last_id = get_last_msg_id_from_room(participants) + 1
             insert_msg["msgId"] = last_id
             insert_message_to_room(participants, last_id, insert_msg)
         else:
