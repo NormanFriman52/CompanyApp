@@ -34,7 +34,7 @@ def get_room_messages(participants, limit=None, last_id=None):
 def insert_message_to_room(participants, last_id, message):
     collection = db.get_collection("chat_rooms")
     collection.update_one({'participants': participants},
-                          {'$push': {'messages': message}, '$set': {"lastMsgId": last_id + 1}})
+                          {'$push': {'messages': message}, '$set': {"lastMsgId": last_id}})
 
 
 def get_last_msg_id_from_room(participants):

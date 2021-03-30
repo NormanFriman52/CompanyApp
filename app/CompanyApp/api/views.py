@@ -91,7 +91,7 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-@api_bp.route('/upload', methods=['GET', 'POST'])
+@api_bp.route('/upload', methods=['POST'])
 def upload_file():
     user = request.args.get("user")
     friend = request.args.get("friend")
@@ -111,7 +111,7 @@ def upload_file():
                 storage_directory = (os.path.join(UPLOAD_FOLDER, storage_directory))
                 filename = id_generator()
                 body = file.filename
-                last_id = get_last_msg_id_from_room(participants)
+                last_id = get_last_msg_id_from_room(participants) + 1
 
                 file_type = file.filename.rsplit('.', 1)[1].lower()
                 file.save(os.path.join(storage_directory, filename + '.' + file_type))
@@ -125,6 +125,22 @@ def upload_file():
                     "msgId": last_id
                 }
                 insert_message_to_room(participants, last_id, insert_msg)
+
+            else:
+                filename = id_generator()
+                body = file.filename
+                storage_directory = (os.path.join(UPLOAD_FOLDER, "main"))
+                file_type = file.filename.rsplit('.', 1)[1].lower()
+                file.save(os.path.join(storage_directory, filename + '.' + file_type))
+                insert_msg = {
+                    "body": body,
+                    "date": f'{datetime.now().strftime("%d/%m/%Y %H:%M:%S")}',
+                    "from": user,
+                    "attachment": {"type": file_type,
+                                   "file_name": filename},
+                    "msgId": get_last_id() + 1
+                }
+                insert_message(insert_msg)
 
             return redirect(url_for('main_board.index'))
 

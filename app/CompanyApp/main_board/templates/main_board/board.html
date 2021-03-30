@@ -19,147 +19,188 @@
             display: none;
         }
 
+        .v-application--wrap {
+            max-height: 80% !important;
+        }
+
 
     </style>
 {% endblock %}
 
 {% block content %}
-    {{ render_navbar() }}
-    <div id="app" v-cloak>
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-3">
+    <div id="app" v-cloak class="main-box">
+        <v-app>
+            {{ render_navbar() }}
+            <div class="container-fluid chat-app">
+                <div class="row">
+                    <div class="col-3">
 
-                    <v-card
-                            class="mt-4 chat-users-box"
-                            max-width="300"
-                            tile
-                    >
-                        <v-toolbar dense>
-                            <v-toolbar-title>Chats</v-toolbar-title>
+                        <v-card
+                                class="mt-4 chat-users-box"
+                                max-width="300"
+                                tile
+                        >
+                            <v-toolbar dense>
+                                <v-toolbar-title>Chats</v-toolbar-title>
 
-                            <v-spacer></v-spacer>
+                                <v-spacer></v-spacer>
 
-                        </v-toolbar>
-                        <v-list two-line v-if="'{{ session.username }}'">
+                            </v-toolbar>
+                            <v-list two-line v-if="'{{ session.username }}'">
 
 
-                            <v-list-item-group
-                                    v-model="selectedItem"
-                                    color="primary"
-                            >
-                                <v-list-item
-                                        v-on:click="setChat('main_board')"
+                                <v-list-item-group
+                                        v-model="selectedItem"
+                                        color="primary"
                                 >
-                                    <span class="dot bg-success text-white">All</span>
-                                    </v-avatar>
-                                    <v-list-item-content>
-                                        <v-list-item-title v-text="'Company chat'"></v-list-item-title>
-                                    </v-list-item-content>
-                                </v-list-item>
+                                    <v-list-item
+                                            v-on:click="setChat('main_board')"
+                                    >
+                                        <span class="dot bg-success text-white">All</span>
+                                        </v-avatar>
+                                        <v-list-item-content>
+                                            <v-list-item-title v-text="'Company chat'"></v-list-item-title>
+                                        </v-list-item-content>
+                                    </v-list-item>
 
-                                <v-list-item
-                                        v-for="(user, i) in users"
-                                        :key="i"
-                                        v-on:click="setChat(user.username)"
-                                >
-                                    <span class="dot bg-dark text-white">[[ user.name[0] ]] [[ user.surname[0] ]] </span>
-                                    </v-avatar>
+                                    <v-list-item
+                                            v-for="(user, i) in users"
+                                            :key="i"
+                                            v-on:click="setChat(user.username)"
+                                    >
+                                        <span class="dot bg-dark text-white">[[ user.name[0] ]] [[ user.surname[0] ]] </span>
+                                        </v-avatar>
 
-                                    <v-list-item-content>
-                                        <v-list-item-title v-text="user.name + ' ' +user.surname"></v-list-item-title>
-                                        <span class="last-message">[[ usersLastMsg[user.username] ]]</span>
-                                    </v-list-item-content>
-                                </v-list-item>
-                            </v-list-item-group>
-                        </v-list>
-                    </v-card>
-                </div>
-
-                <div class="col jumbotron mt-5 mr-4" style="width: 700px; height: 600px">
-                    <div id="scroller" class="chat container">
-                        <div v-for="message in messages" class="message row">
-
-                            <div v-if="message.from == user" style="margin-left: 20%;"
-                                 class="col message-box bg-info text-white">
-                                <p class="text-right">
-                                    <span> [[ message['date'] ]] </span>
-                                    <span class="font-weight-bold"> [[ message['from'] ]] </span>
-                                </p>
-                                <div v-if="message.attachment">
-                                    <div v-if="message.attachment.type == 'png'  || message.attachment.type == 'gif'
-                                                || message.attachment.type == 'jpg' || message.attachment.type == 'jpeg'">
-                                    <img v-bind:src="getFilePath(message)" alt="Girl in a jacket" width="100" height="100">
-                                    </div>
-                                    <div v-else>
-                                        <p class="text-right">
-                                        <a v-bind:href="'{{ url_for('api.uploaded_file') }}' + message.attachment.file_name
-                                                                    + '.' + message.attachment.type" class="text-white" download>
-                                            [[ message.body ]]
-                                        </a>
-                                        </p>
-                                    </div>
-                                </div>
-                                <div v-else>
-                                    <p class="text-right"> [[ message['body'] ]] </p>
-                                </div>
-                            </div>
-
-                            <div v-else class="col-9 message-box bg-dark text-white">
-                                <p>
-                                    <span class="font-weight-bold"> [[ message['from'] ]] </span>
-                                    <span> [[ message['date'] ]] </span>
-                                </p>
-                                <p> [[ message['body'] ]] </p>
-                                <div v-if="message.attachment">
-                                    <div v-if="message.attachment.type == 'png'  || message.attachment.type == 'gif'
-                                                || message.attachment.type == 'jpg' || message.attachment.type == 'jpeg'">
-                                    <img v-bind:src=
-                                                 "'{{ url_for('api.uploaded_file') }}' + message.attachment.file_name
-                                                                    + '.' + message.attachment.type"
-                                         alt="Girl in a jacket" width="100"
-                                         height="100">
-                                    </div>
-                                    <div v-else>
-                                        <a v-bind:href="'{{ url_for('api.uploaded_file') }}' + message.attachment.file_name
-                                                                    + '.' + message.attachment.type">
-                                            [[ message.body ]]
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-
-                        <div id="anchor"></div>
+                                        <v-list-item-content>
+                                            <v-list-item-title
+                                                    v-text="user.name + ' ' +user.surname"></v-list-item-title>
+                                            <span class="last-message">[[ usersLastMsg[user.username] ]]</span>
+                                        </v-list-item-content>
+                                    </v-list-item>
+                                </v-list-item-group>
+                            </v-list>
+                        </v-card>
                     </div>
 
-                    <form id="message_form" v-if="chat" class="chat-form-box">
-                        <dl class="input-message">
-                            {{ message_form.csrf_token }}
-                            <input id="from" name="from" type="hidden" value='{{ session.username }}'/>
-                            {{ message_form.message(**{"class":"form-control","v-on:keydown.enter.prevent":"sendMsg()","autocomplete":"off"}) }}
-                        </dl>
-                        <a v-on:click="sendMsg()" class="input-message-submit btn btn-primary" id="submit">
-                            <v-icon small>
-                                mdi-send
-                            </v-icon>
-                        </a>
-                    </form>
-                    <form class="chat-form-box" v-bind:action="'{{ url_for('api.upload_file') }}?user=' + user +'&friend=' + friend"
-                          method=post enctype=multipart/form-data>
-                        <input type=file name=file>
-                        <input type=submit value=Upload>
-                    </form>
+                    <div class="col jumbotron mt-5 mr-4" style="width: 700px; height: 700px">
+                        <div id="scroller" class="chat container">
+                            <div v-for="message in messages" class="message row">
+
+                                <div v-if="message.from == user" style="margin-left: 20%;"
+                                     class="col message-box bg-chat-msg-user text-white">
+                                    <p class="text-right">
+                                        <span> [[ message['date'] ]] </span>
+                                        <span class="font-weight-bold"> [[ message['from'] ]] </span>
+                                    </p>
+                                    <div v-if="message.attachment">
+                                        <div v-if="message.attachment.type == 'png'  || message.attachment.type == 'gif'
+                                                || message.attachment.type == 'jpg' || message.attachment.type == 'jpeg'"
+                                             class="float-right">
+                                            <img v-bind:src="getFilePath(message)" alt="Girl in a jacket"
+                                                 class="chat-img">
+                                        </div>
+                                        <div v-else>
+                                            <p class="text-right">
+                                                <a v-bind:href="getFilePath(message)" class="text-white" download>
+                                                    [[ message.body ]]
+                                                </a>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div v-else>
+                                        <p class="text-right"> [[ message['body'] ]] </p>
+                                    </div>
+                                </div>
+
+                                <div v-else class="col-9 message-box bg-dark text-white">
+                                    <p>
+                                        <span class="font-weight-bold"> [[ message['from'] ]] </span>
+                                        <span> [[ message['date'] ]] </span>
+                                    </p>
+                                    <div v-if="message.attachment">
+                                        <div v-if="message.attachment.type == 'png'  || message.attachment.type == 'gif'
+                                                || message.attachment.type == 'jpg' || message.attachment.type == 'jpeg'">
+                                            <img v-bind:src="getFilePath(message)" alt="" class="chat-img">
+                                        </div>
+                                        <div v-else>
+                                            <a v-bind:href="getFilePath(message)" class="text-white" download>
+                                                [[ message.body ]]
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div v-else>
+                                        <p class="text-right"> [[ message['body'] ]] </p>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div id="anchor"></div>
+                        </div>
+
+                        <form id="message_form" v-if="chat" class="chat-form-box">
+                            <dl class="input-message">
+                                {{ message_form.csrf_token }}
+                                <input id="from" name="from" type="hidden" value='{{ session.username }}'/>
+                                {{ message_form.message(**{"class":"form-control","v-on:keydown.enter.prevent":"sendMsg()","autocomplete":"off"}) }}
+                            </dl>
+                            <a v-on:click="sendMsg()" class="input-message-submit btn btn-primary" id="submit">
+                                <v-icon small>
+                                    mdi-send
+                                </v-icon>
+                            </a>
+                        </form>
+
+                        <div class="chat-form-buttons">
+                            <v-dialog v-model="dialog" width="800">
+                                <template v-slot:activator="{ on, attrs }">
+                                    <v-btn color="red lighten-2" dark v-bind="attrs" v-on="on" small>
+                                        <v-icon small>
+                                            mdi-paperclip
+                                        </v-icon>
+                                    </v-btn>
+                                </template>
+                                <v-card>
+                                    <v-card-title class="headline grey lighten-2">
+                                        Send file
+                                    </v-card-title>
+                                    <v-card-actions>
+                                        <form>
+                                            <input type=file name=file id="file" class="chat-file-input"
+                                                   onchange="loadFile(event)">
+                                            <img id="output" class="chat-img-preview mt-2 ml-5"/>
+                                        </form>
+                                        <v-spacer></v-spacer>
+                                        <v-btn color="primary" text @click="sendPicture()">
+                                            Send
+                                        </v-btn>
+                                    </v-card-actions>
+                                </v-card>
+                            </v-dialog>
+                        </div>
+
+                    </div>
                 </div>
             </div>
-        </div>
+        </v-app>
     </div>
-    </div>
+
 
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+
+
+    <script>
+        var loadFile = function (event) {
+            var reader = new FileReader();
+            reader.onload = function () {
+                var output = document.getElementById('output');
+                output.src = reader.result;
+            };
+            reader.readAsDataURL(event.target.files[0]);
+        };
+    </script>
     <script>
         const app = new Vue({
             el: "#app",
@@ -170,12 +211,15 @@
                 intervalLastMsgId: null,
                 messages: [],
                 messagesIds: [],
-                chat: "",
+                chat: "{{ url_for_api_messages }}" + "?limit=" + "{{ limit }}",
+                dialog: false,
                 users: [],
                 usersLastMsg: {},
                 friend: "",
+                sendFileUrl: "",
+                getFileUrl: "",
                 user: "{{ session.username }}",
-                sendUrl: "",
+                sendUrl: "{{ url_for('api.send') }}",
                 selectedItem: "",
                 scrollNotForScroll: false,
                 items: [
@@ -196,6 +240,7 @@
                                 }
                             }
                         });
+
                 },
                 loadLastMsgs() {
                     for (let friend of this.users) {
@@ -235,6 +280,20 @@
                         });
                     message.value = ""
                 },
+                sendPicture() {
+                    let formData = new FormData();
+                    let file = document.querySelector('#file');
+                    formData.append("file", file.files[0]);
+                    axios.post(this.sendFileUrl, formData, {
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
+                        }
+                    })
+                    this.dialog = false
+                    file.value = ''
+                    let output = document.getElementById('output');
+                    output.src = "";
+                },
                 scrollOnTop() {
                     const scroller = document.getElementById('scroller')
                     if (scroller.scrollTop == 0 && this.messagesIds.length) {
@@ -270,6 +329,9 @@
                     if (chat === "main_board") {
                         this.chat = "{{ url_for_api_messages }}" + "?limit=" + "{{ limit }}"
                         this.sendUrl = '{{ url_for('api.send') }}'
+                        this.sendFileUrl = '{{ url_for('api.upload_file') }}?user=' + this.user
+                        this.getFileUrl = '{{ url_for('api.uploaded_file') }}'+ 'main'
+
                     } else {
                         this.changeRoom(chat)
                     }
@@ -279,14 +341,13 @@
                     this.friend = friend
                     this.chat = "{{ url_for('api.chat_rooms') }}?" + "friend=" + friend + "&user=" + this.user + "&limit=" + "{{ limit }}"
                     this.sendUrl = "{{ url_for('api.send') }}?" + "friend=" + friend + "&user=" + this.user
-                },
-                getFilePath(message) {
+                    this.sendFileUrl = '{{ url_for('api.upload_file') }}?user=' + this.user + '&friend=' + this.friend
                     let participants = new Array(this.user, this.friend)
                     participants = participants.sort()
-                    let path = '{{ url_for('api.uploaded_file') }}'
-                        + participants[0] + '_' + participants[1] + '/'
-                        + message.attachment.file_name
-                        + '.' + message.attachment.type
+                    this.getFileUrl = '{{ url_for('api.uploaded_file') }}'+ participants[0] + '_' + participants[1]
+                },
+                getFilePath(message) {
+                    let path = this.getFileUrl + '/'+ message.attachment.file_name + '.' + message.attachment.type
                     return path
                 }
             },
