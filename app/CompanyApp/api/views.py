@@ -19,9 +19,9 @@ def index():
 
 @api_bp.route("/users")
 def users():
-    uid = request.args.get('uid')
-    if uid:
-        return get_single_user_params(uid)
+    username = request.args.get('username')
+    if username:
+        return get_single_user_params(username)
     else:
         return get_users_params()
 

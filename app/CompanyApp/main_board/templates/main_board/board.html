@@ -110,8 +110,8 @@
                     </div>
 
                     <div class="col jumbotron mt-10 mr-10" style="width: 700px; height: 700px">
-                        <div class="card-header chat-header" v-if="chat">
-                            [[ friend ]]
+                        <div class="card-header chat-header">
+                            <p v-if="chat">[[ friend ]]</p>
                         </div>
                         <div id="scroller" class="chat container mt-2">
                             <div v-for="message in messages" class="message row">
@@ -128,6 +128,11 @@
                                              class="float-right">
                                             <img v-bind:src="getFilePath(message)" alt="Girl in a jacket"
                                                  class="chat-img">
+                                        </div>
+                                        <div v-else-if="message.attachment.type == 'mp3'" class="float-right">
+                                            <audio controls>
+                                                <source v-bind:src="getFilePath(message)" type="audio/mpeg">
+                                            </audio>
                                         </div>
                                         <div v-else>
                                             <p class="text-right">
@@ -151,6 +156,11 @@
                                         <div v-if="message.attachment.type == 'png'  || message.attachment.type == 'gif'
                                                 || message.attachment.type == 'jpg' || message.attachment.type == 'jpeg'">
                                             <img v-bind:src="getFilePath(message)" alt="" class="chat-img">
+                                        </div>
+                                        <div v-else-if="message.attachment.type == 'mp3'">
+                                            <audio controls>
+                                                <source v-bind:src="getFilePath(message)" type="audio/mpeg">
+                                            </audio>
                                         </div>
                                         <div v-else>
                                             <a v-bind:href="getFilePath(message)" class="text-white" download>
@@ -303,7 +313,7 @@
             }),
             methods: {
                 loadData() {
-                    try {
+                    if (this.chat) {
                         fetch(this.chat)
                             .then(response => response.json())
                             .then(json => {
@@ -314,8 +324,6 @@
                                     }
                                 }
                             });
-                    } catch (error) {
-
                     }
 
                 },

@@ -204,3 +204,9 @@
 .bg-chat-msg-user {
     background: #2196f3;
 }
+
+.alerts {
+    position: absolute;
+    width: 100%;
+    opacity: 0.9;
+}

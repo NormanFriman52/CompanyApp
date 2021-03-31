@@ -1,6 +1,6 @@
 from CompanyApp.controllers.main_board_messages_controller import get_messages
 from CompanyApp.controllers.chat_rooms_controller import get_room_messages
-from CompanyApp.controllers.users_controller import get_users
+from CompanyApp.controllers.users_controller import get_users, get_user
 import json
 
 
@@ -20,15 +20,8 @@ def get_users_params(parse=True):
     return users
 
 
-def get_single_user_params(uid):
-    if isinstance(uid, str):
-        uid = int(uid)
-    users = get_users_params(parse=False)
-    for user in users:
-        if user["uid"] == uid:
-            return user
-    else:
-        return {}
+def get_single_user_params(username):
+    return get_user(username)
 
 
 def get_main_board_massages(limit=None, last_id=None):

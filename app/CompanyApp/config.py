@@ -4,4 +4,4 @@ class Config():
 
 
 UPLOAD_FOLDER = r'C:\Users\kgolonka\Desktop\chat_uploads'
-ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
+ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'mp3'}

@@ -3,7 +3,6 @@ from .api import api_bp
 from .main import main_bp
 from .main_board import main_board_bp
 from .authorization import authorization_bp
-from flask_mongoengine import MongoEngine
 from CompanyApp.config import Config
 
 
