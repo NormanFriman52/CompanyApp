@@ -11,13 +11,13 @@ def check_credentials(username, password):
 
 def get_users():
     collection = db.get_collection("users")
-    users = list(collection.find({}, {'_id': 0}))
+    users = list(collection.find({}, {"password": 0, "_id": 0, "hash_code": 0, "uid":0}))
     return users
 
 
 def get_user(username):
     collection = db.get_collection("users")
-    user = collection.find_one({"username": username}, {"password": 0, "_id": 0, "hash_code": 0})
+    user = collection.find_one({"username": username}, {"password": 0, "_id": 0, "hash_code": 0, "uid":0})
     return user
 
 

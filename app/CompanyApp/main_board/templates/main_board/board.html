@@ -11,7 +11,6 @@
     <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
-
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
 
     <style>
@@ -22,8 +21,6 @@
         .v-application--wrap {
             max-height: 80% !important;
         }
-
-
     </style>
 {% endblock %}
 
@@ -34,7 +31,6 @@
             <div class="container-fluid chat-app">
                 <div class="row">
                     <div class="col-3">
-
                         <v-card
                                 class="mt-4 chat-users-box"
                                 max-width="300"
@@ -58,6 +54,12 @@
                                         color="primary"
                                         class="overflow-y-auto"
                                 >
+                                    <v-list-item>
+                                        <v-text-field
+                                                v-model="chatSearch"
+                                                label="Search"
+                                        ></v-text-field>
+                                    </v-list-item>
                                     <v-list-item
                                             v-on:click="setChat('main_board')"
                                     >
@@ -65,34 +67,23 @@
                                         </v-avatar>
                                         <v-list-item-content>
                                             <v-list-item-title v-text="'Company chat'"></v-list-item-title>
+                                            <span id="new_msg_general_chat"></span>
                                         </v-list-item-content>
+
                                     </v-list-item>
 
                                     <v-list-item
                                             v-for="(user, i) in users"
+                                            v-if="filterChats(user)"
                                             :key="i"
                                             v-on:click="setChat(user.username)"
                                     >
-                                        <v-badge
-                                                v-if="user.state.available"
-                                                bordered
-                                                top
-                                                color="green darken-2"
-                                                dot
-                                                offset-x="10"
-                                                offset-y="10"
-                                        >
+                                        <v-badge v-if="user.state.available" bordered top color="green darken-2" dot
+                                                 offset-x="10" offset-y="10">
                                             <span class="dot bg-dark text-white">[[ user.name[0] ]] [[ user.surname[0] ]] </span>
                                         </v-badge>
-                                        <v-badge
-                                                v-else
-                                                bordered
-                                                top
-                                                color="blue-grey lighten-4"
-                                                dot
-                                                offset-x="10"
-                                                offset-y="10"
-                                        >
+                                        <v-badge v-else bordered top color="blue-grey lighten-4" dot offset-x="10"
+                                                 offset-y="10">
                                             <span class="dot bg-dark text-white">[[ user.name[0] ]] [[ user.surname[0] ]] </span>
                                         </v-badge>
 
@@ -101,7 +92,7 @@
                                         <v-list-item-content>
                                             <v-list-item-title
                                                     v-text="user.name + ' ' +user.surname"></v-list-item-title>
-                                            <span class="last-message">[[ usersLastMsg[user.username] ]]</span>
+                                            <span v-bind:id="'new_msg_'+user.username"></span>
                                         </v-list-item-content>
                                     </v-list-item>
                                 </v-list-item-group>
@@ -244,7 +235,6 @@
                                 </v-card>
                             </v-dialog>
                         </div>
-
                     </div>
                 </div>
             </div>
@@ -255,8 +245,11 @@
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
-
-
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+            integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT"
+            crossorigin="anonymous"></script>
     <script>
         var loadFile = function (event) {
             var reader = new FileReader();
@@ -278,6 +271,7 @@
                 messages: [],
                 messagesIds: [],
                 chat: "",
+                chatSearch: "",
                 dialog: false,
                 users: [],
                 usersLastMsg: {},
@@ -310,8 +304,26 @@
                     },
 
                 ],
+                socket: io('http://127.0.0.1:5000')
             }),
             methods: {
+                setSocketConnection() {
+                    this.socket.on('connect', function () {
+                        app.socket.emit('add_user_socket', app.user)
+                    })
+                    this.socket.on('new_user_logged', function () {
+                        app.fetchUsers()
+                    })
+                    this.socket.on('new_message', function (msg_from) {
+                        if (msg_from == app.friend) {
+                            app.loadData()
+                            app.notifyAboutNewMsg(app.friend)
+                        } else {
+                            app.notifyAboutNewMsg(msg_from)
+                        }
+                    })
+
+                },
                 loadData() {
                     if (this.chat) {
                         fetch(this.chat)
@@ -325,7 +337,6 @@
                                 }
                             });
                     }
-
                 },
                 loadLastMsgs() {
                     for (let friend of this.users) {
@@ -334,22 +345,40 @@
                             .then(response => response.json())
                             .then(json => {
                                 for (let message of json.messages) {
-                                    this.usersLastMsg[friend.username] = message.body
+                                    this.fillLastMessage(friend.username, message)
                                 }
                             });
+                    }
+                },
+                notifyAboutNewMsg(msg_from) {
+                    let fetch_url = "{{ url_for('api.chat_rooms') }}?" + "friend=" + msg_from + "&user=" + this.user + "&limit=1"
+                    fetch(fetch_url)
+                        .then(response => response.json())
+                        .then(json => {
+                            for (let message of json.messages) {
+                                this.fillLastMessage(msg_from, message)
+                            }
+                        });
+                },
+                fillLastMessage(msg_from, message) {
+                    if (message.attachment) {
+                        $('#new_msg_' + msg_from).text("*File*")
+                    } else {
+                        $('#new_msg_' + msg_from).text(message.body)
                     }
                 },
                 fetchUsers() {
                     fetch(" {{ url_for('api.users') }} ")
                         .then(response => response.json())
                         .then(json => {
+                            this.users = []
                             for (let user of json.users) {
-                                if (user.username !== "{{ session['username'] }}") {
+                                if (user.username !== this.user) {
                                     this.users.push(user)
-                                    this.usersLastMsg[user.username] = ""
                                 }
                             }
                         });
+                    this.loadLastMsgs()
                 },
                 sendMsg() {
                     const message = document.getElementById('message')
@@ -363,6 +392,7 @@
                         }, (error) => {
                             console.log(error);
                         });
+                    this.socket.emit("private_message", {"username": this.user, "friend": this.friend})
                     message.value = ""
                 },
                 sendPicture() {
@@ -377,6 +407,9 @@
                     this.dialog = false
                     file.value = ''
                     let output = document.getElementById('output');
+                    this.socket.send("new picture ")
+                    this.socket.emit("private_message", {"username": this.user, "friend": this.friend})
+
                     output.src = "";
                 },
                 scrollOnTop() {
@@ -412,18 +445,20 @@
                     this.messages = []
                     this.messagesIds = []
                     if (chat === "main_board") {
-                        this.chat = "{{ url_for_api_messages }}" + "?limit=" + "{{ limit }}"
-                        this.sendUrl = '{{ url_for('api.send') }}'
-                        this.sendFileUrl = '{{ url_for('api.upload_file') }}?user=' + this.user
-                        this.getFileUrl = '{{ url_for('api.uploaded_file') }}' + 'main'
-                        this.friend = "Company chat"
-
+                        this.setGeneralRoom()
                     } else {
-                        this.changeRoom(chat)
+                        this.setPrivateRoom(chat)
                     }
                     this.loadData();
                 },
-                changeRoom(friend) {
+                setGeneralRoom() {
+                    this.friend = "general_chat"
+                    this.chat = "{{ url_for_api_messages }}" + "?limit=" + "{{ limit }}"
+                    this.sendUrl = '{{ url_for('api.send') }}'
+                    this.sendFileUrl = '{{ url_for('api.upload_file') }}?user=' + this.user
+                    this.getFileUrl = '{{ url_for('api.uploaded_file') }}' + 'main'
+                },
+                setPrivateRoom(friend) {
                     this.friend = friend
                     this.chat = "{{ url_for('api.chat_rooms') }}?" + "friend=" + friend + "&user=" + this.user + "&limit=" + "{{ limit }}"
                     this.sendUrl = "{{ url_for('api.send') }}?" + "friend=" + friend + "&user=" + this.user
@@ -435,17 +470,17 @@
                 getFilePath(message) {
                     let path = this.getFileUrl + '/' + message.attachment.file_name + '.' + message.attachment.type
                     return path
+                },
+                filterChats(username) {
+                    return username.name.includes(this.chatSearch) || username.surname.includes(this.chatSearch)
                 }
             },
             mounted() {
-                this.fetchUsers();
+                this.setSocketConnection();
                 this.loadData();
-                this.loadLastMsgs();
+                this.fetchUsers();
                 const scroller = document.getElementById('scroller')
                 scroller.addEventListener('scroll', this.scrollOnTop)
-                this.intervalId = setInterval(() => this.loadData(), 2000);
-                this.intervalLastMsgId = setInterval(() => this.loadLastMsgs(), 2000);
-
             },
             updated() {
                 this.$nextTick(() => this.scrollToBottom())

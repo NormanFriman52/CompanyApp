@@ -12,6 +12,7 @@ from CompanyApp.controllers.chat_rooms_controller import insert_message_to_room,
 api_bp = Blueprint("api", __name__, template_folder="templates")
 
 
+
 @api_bp.route("/")
 def index():
     return 'api'
