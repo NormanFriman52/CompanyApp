@@ -11,7 +11,12 @@
                     <a class="nav-link" href=" {{ url_for("main_board.index") }} ">Chat <span
                             class="sr-only">(current)</span></a>
                 </li>
-
+                {% if session.get('username') == 'kamil' %}
+                <li class="nav-item active">
+                    <a class="nav-link" href=" {{ url_for("authorization.assignment_center") }} ">Assignments <span
+                            class="sr-only">(current)</span></a>
+                </li>
+                {% endif %}
             </ul>
         </div>
         <span>{{ session["username"] }}</span>

@@ -1,3 +1,6 @@
+"""
+Module initializing the flask app. It create blueprints, configure the application and initialize socket module.
+"""
 from flask import Flask
 from flask_socketio import SocketIO
 from CompanyApp.api import api_bp

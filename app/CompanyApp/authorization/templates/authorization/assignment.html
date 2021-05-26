@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% from "_navbar.html" import render_navbar %}
+{% from "_macros.html" import render_field %}
+
+{% block title %}
+    Board
+{% endblock %}
+
+{% block head %}
+    <meta charset="utf-8">
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+
+        body {
+            background: #212529;
+        }
+
+        .assignments_container {
+            background: white;
+        }
+
+        .assignments_container:hover {
+            background: #bab9b9;
+        }
+
+        input {
+            display: block;
+        }
+
+        .gender_input input {
+            display: inline-block;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    {{ render_navbar() }}
+    <div class="row">
+        <div class="col-6  ">
+            {% for assignment in assignments %}
+                <div class="py-2 assignments_container"
+                     onclick="fillForm('{{ assignment['first_name'] }}','{{ assignment['last_name'] }}','{{ assignment['email'] }}','{{ assignment['id'] }}' );">
+
+                    <span>Name: {{ assignment['first_name'] }}</span>
+                    <span>Surname: {{ assignment['last_name'] }}</span>
+                    <span>Email: {{ assignment['email'] }}</span>
+                    <span>ID: {{ assignment['id'] }}</span>
+                    <button class="btn" onclick="deleteAssignment('{{ assignment['id'] }}')">
+                        DELETE
+                    </button>
+                </div>
+
+            {% endfor %}
+        </div>
+        <div class="col-6 assignments_container">
+            <form method="post" id="assignment_form">
+                <span>Id:</span>
+                <input type="text" id="assignment_id" disabled>
+
+                <span>Name:</span>
+                <input type="text" id="name" disabled>
+
+                <span>Surname:</span>
+                <input type="text" id="surname" disabled>
+
+                <span>Email:</span>
+                <input type="text" id="email" disabled>
+
+                <span>Username:</span>
+                <input type="text" id="username">
+
+                <span>Password:</span>
+                <input type="text" id="password">
+
+                <div class="gender_input">
+                    <p>Gender</p>
+
+                    <input type="radio" id="male" name="gender" value="male">
+                    <label for="male">Male</label><br>
+                    <input type="radio" id="female" name="gender" value="female">
+                    <label for="female">Female</label><br>
+                </div>
+                <button class="btn" onclick="postAssignment()" value="Register">Register</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function fillForm(name, surname, email, assignment_id) {
+            $('#name').val(name)
+            $('#surname').val(surname)
+            $('#email').val(email)
+            $('#assignment_id').val(assignment_id)
+        }
+
+        function deleteAssignment(id) {
+            $.post("{{ url_for('authorization.assignment_center') }}", {"delete": id});
+            window.location.reload(true);
+        }
+
+        function postAssignment() {
+            let data = {
+                "assignment_id": $('#assignment_id').val(),
+                "name": $('#name').val(),
+                "surname": $('#surname').val(),
+                "username": $('#username').val(),
+                "email": $('#email').val(),
+                "password": $('#password').val(),
+                "gender": $('input[name="gender"]:checked').val()
+            }
+            console.log(data)
+            $.post("{{ url_for('authorization.assignment_center') }}", data);
+            window.location.reload(true);
+
+        }
+
+    </script>
+{% endblock %}

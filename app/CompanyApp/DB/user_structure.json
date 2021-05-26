@@ -1,30 +1,61 @@
 [
   {
-    "username": "json",
-    "uid": 1,
-    "name": "json",
-    "surname": "jsonwski",
-    "gender": "male",
-    "email": "json@test.com",
-    "hash_code": "hashing code",
-    "password": "test",
-    "state": {
-      "online": true,
-      "available": true
-    }
+    "attachment": false,
+    "body": "halo",
+    "date": "18/05/2021 18:53:34",
+    "from": "kamil",
+    "msgId": 9
   },
   {
-    "username": "dzonson",
-    "uid": 2,
-    "name": "json",
-    "surname": "jsonwski",
-    "gender": "male",
-    "email": "json@test.com",
-    "hash_code": "hashing code",
-    "password": "test",
-    "state": {
-      "online": true,
-      "available": true
-    }
+    "attachment": false,
+    "body": "joł",
+    "date": "21/04/2021 16:50:06",
+    "from": "kamil",
+    "msgId": 8
+  },
+  {
+    "attachment": false,
+    "body": "lhako",
+    "date": "21/04/2021 16:22:57",
+    "from": "kamil",
+    "msgId": 7
+  },
+  {
+    "attachment": false,
+    "body": "haloko",
+    "date": "21/04/2021 16:22:56",
+    "from": "kamil",
+    "msgId": 6
+  },
+  {
+    "attachment": false,
+    "body": "Na ASAP",
+    "date": "21/04/2021 09:22:56",
+    "from": "kamil",
+    "msgId": 5
+  },
+  {
+    "attachment": false,
+    "body": "Ostatnia wiadomość",
+    "date": "21/04/2021 09:22:42",
+    "from": "kamil",
+    "msgId": 4
+  },
+  {
+    "attachment": {
+      "file_name": "JJ3UP9",
+      "type": "png"
+    },
+    "body": "231-2312153_transparent-narnia-png-chronicles-of-narnia-logo-png.png",
+    "date": "20/04/2021 10:17:47",
+    "from": "kamil",
+    "msgId": 3
+  },
+  {
+    "attachment": false,
+    "body": "asd",
+    "date": "19/04/2021 13:13:36",
+    "from": "kamil",
+    "msgId": 2
   }
 ]

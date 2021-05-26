@@ -64,7 +64,7 @@
                                             v-on:click="setChat('main_board')"
                                     >
                                         <span class="dot bg-success text-white">All</span>
-                                        </v-avatar>
+
                                         <v-list-item-content>
                                             <v-list-item-title v-text="'Company chat'"></v-list-item-title>
                                             <span id="new_msg_general_chat"></span>
@@ -76,25 +76,49 @@
                                             v-for="(user, i) in users"
                                             v-if="filterChats(user)"
                                             :key="i"
-                                            v-on:click="setChat(user.username)"
+
                                     >
                                         <v-badge v-if="user.state.available" bordered top color="green darken-2" dot
                                                  offset-x="10" offset-y="10">
-                                            <span class="dot bg-dark text-white">[[ user.name[0] ]] [[ user.surname[0] ]] </span>
+                                            <span class="dot bg-dark text-white" @click="openDialog(user)">[[ user.name[0] ]] [[ user.surname[0] ]] </span>
                                         </v-badge>
                                         <v-badge v-else bordered top color="blue-grey lighten-4" dot offset-x="10"
                                                  offset-y="10">
-                                            <span class="dot bg-dark text-white">[[ user.name[0] ]] [[ user.surname[0] ]] </span>
+                                            <span class="dot bg-dark text-white" @click="openDialog(user)">[[ user.name[0] ]] [[ user.surname[0] ]] </span>
                                         </v-badge>
 
-                                        </v-avatar>
 
-                                        <v-list-item-content>
+                                        <v-list-item-content v-on:click="setChat(user.username)">
                                             <v-list-item-title
                                                     v-text="user.name + ' ' +user.surname"></v-list-item-title>
                                             <span v-bind:id="'new_msg_'+user.username"></span>
                                         </v-list-item-content>
                                     </v-list-item>
+
+                                    <v-dialog
+                                            v-model="avatarDialog"
+                                            max-width="500px"
+                                            transition="scale-transition"
+                                    >
+                                        <v-card>
+                                            <v-toolbar
+                                                    dark
+                                            >[[ avatarDialogParams.name ]] [[ avatarDialogParams.surname ]]
+                                            </v-toolbar>
+                                            <p class="ml-2 mb-2 mt-2">Email [[ avatarDialogParams.email ]]</p>
+                                            <hr class="solid">
+                                            <p class="ml-2 mb-2">Username [[ avatarDialogParams.username ]]</p>
+                                            <hr class="solid">
+                                            <button
+                                                    v-on:click="downloadData(avatarDialogParams)"
+                                                    class="btn btn-primary ml-2 mb-2"
+                                            >
+                                                Download Chat Data
+                                            </button>
+                                        </v-card>
+                                    </v-dialog>
+
+
                                 </v-list-item-group>
                             </v-list>
                         </v-card>
@@ -282,6 +306,8 @@
                 sendUrl: "{{ url_for('api.send') }}",
                 selectedItem: "",
                 scrollNotForScroll: false,
+                avatarDialogParams: {},
+                avatarDialog: false,
                 items: [
                     {
                         color: 'blue lighten-1',
@@ -473,6 +499,26 @@
                 },
                 filterChats(username) {
                     return username.name.includes(this.chatSearch) || username.surname.includes(this.chatSearch)
+                },
+                openDialog(user) {
+                    this.avatarDialog = true;
+                    this.avatarDialogParams = user
+                },
+                downloadData(user) {
+                    console.log(user)
+                    let fetch_url = "{{ url_for('api.chat_rooms') }}?" + "friend=" + user.username + "&user=" + this.user
+                    fetch(fetch_url)
+                        .then(response => response.json())
+                        .then(json => {
+                            let text = JSON.stringify(json.messages)
+                            let element = document.createElement('a');
+                            element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+                            element.setAttribute('download', user.username);
+                            element.style.display = 'none';
+                            document.body.appendChild(element);
+                            element.click();
+                            document.body.removeChild(element);
+                        });
                 }
             },
             mounted() {

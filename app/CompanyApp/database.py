@@ -1,3 +1,6 @@
+"""
+Create connection with database and MongoEngine object
+"""
 from pymongo import MongoClient
 
 
