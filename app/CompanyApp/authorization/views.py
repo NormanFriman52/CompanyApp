@@ -1,3 +1,6 @@
+"""
+Module create blueprint for authorization, contains the method used for logging in and out, registration and assignment.
+"""
 from flask import Blueprint, render_template, flash, redirect, session, request, url_for
 from .forms import LoginForm, RegisterForm
 from CompanyApp.controllers.users_controller import check_credentials, set_user_status
@@ -9,6 +12,11 @@ authorization_bp = Blueprint("authorization", __name__, template_folder="templat
 
 @authorization_bp.route("/logout")
 def logout():
+    """
+    Create /logout route
+    Set the user status to not available and destroy the session variable.
+    :return: url for main_board.index
+    """
     set_user_status(session.get('username'), False)
     session.pop('username', None)
     return redirect(url_for("main_board.index"))
@@ -16,6 +24,12 @@ def logout():
 
 @authorization_bp.route("/", methods=["GET", "POST"])
 def login():
+    """
+    Creates / route
+    Validate the request, set user status to available and create session variable. If the request is not sent
+    returns rendered template.
+    :return: rendered template login.html
+    """
     if session.get('username'):
         flash(f"You are already logged in", "error")
         return redirect(url_for("main_board.index"))
@@ -39,6 +53,11 @@ def login():
 
 @authorization_bp.route("/register", methods=["POST", "GET"])
 def register():
+    """
+    Create /register route
+    Validate the registration request and create assignment.
+    :return: rendered template register.html
+    """
     if session.get('username'):
         flash(f"You are already logged in", "error")
         return redirect(url_for("main_board.index"))
@@ -57,6 +76,11 @@ def register():
 
 @authorization_bp.route("/assignments", methods=["POST", "GET"])
 def assignment_center():
+    """
+    Create /assignments route.
+    Accept or decline assignment
+    :return: rendered template assignment.html
+    """
     if session.get('username') != "kamil":
         return redirect(url_for("main_board.index"))
 

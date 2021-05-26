@@ -1,5 +1,5 @@
 """
-    Blueprint containing main views and views not related to anything particular.
+    Blueprint containing main views.
 """
 
 from .views import main_bp
