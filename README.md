@@ -14,7 +14,7 @@ There is socket connection created between the both sides.
 This connection provide TCP communication for receiving messages and informing about changes in the users statuses.
 The users and messages data is stored on MongoDb database on localhost.
 
-#Configuration 
+# Configuration 
 
 In config.py file it is possible to:
  - configure the secret key which flask app need to run.
@@ -31,16 +31,16 @@ UPLOAD_FOLDER = r'C:\Users\kgolonka\Desktop\chat_uploads'
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'mp3'}
 ```
  
-#Dependencies
+# Dependencies
 
 Dependencies can be found in the requirements.txt file.
 
-#Administration
+# Administration
 
 Pyhon file __init__.py in the ../app/CompanyApp directory starts the application on localhost.
 Application can also be deployed outside localhost, but my solution doesn't provide this functionality.
 
-#Usage
+# Usage
 ##### Registration
 
 The /authorization/register route is made for registration.
@@ -81,7 +81,7 @@ Then he can choose file and send it by clicking 'SEND' button
 
 To logout user need to click Logout button in the right side of the navbar
 
-#Administrator account
+# Administrator account
 
 To approve or decline registration assignments administrator can either do it by operating in the database or via GUI.
 Using GUI is possible after logging in as 'kamil'. The password is 'test'.
