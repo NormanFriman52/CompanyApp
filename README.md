@@ -76,6 +76,13 @@ Collection stores the documents with messages in the 'Company chat' room.
 ##### users
 Collection stores the document with information about registered users.
 
+# HTML templates
+Each blueprint contains own templates directory. 
+This directory contains all of the html file rendered in each blueprint.
+There is also templates directory in the parent directory.
+This directory contains base templates in so-called macro function used in other templates.
+
+
 # Endpoints and blueprints.
 
 Flask framework offer categorizing routes into the subgroups called blueprints.
