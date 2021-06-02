@@ -42,7 +42,7 @@ ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'mp3'}
 
 # Dependencies
 
-Python libraries needed for project tu run can be found in the requirements.txt file.
+Python libraries needed for project to run can be found in the requirements.txt file.
 Application also need connection with MongoDB database.
 On the front-end side app use 
 [Bootstrap 4.2](https://getbootstrap.com/docs/4.2/getting-started/introduction/), 
