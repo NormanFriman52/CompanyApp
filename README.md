@@ -86,7 +86,7 @@ app.register_blueprint(main_board_bp, url_prefix="/board")
 app.register_blueprint(authorization_bp, url_prefix="/authorization")
 ```
 These blueprints are created in __init__.py. They provide the prefix to URL route.
-Each blueprint have it's routes.
+Each blueprint have own endpoints.
 
 ##### Main
 / - it is index page of app
