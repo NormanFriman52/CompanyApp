@@ -33,12 +33,13 @@ class Config:
     MONGODB_SETTINGS = {"db": "ChatApp", "host": "mongodb://localhost:27017/ChatApp"}
 ```
  - configure the storage directory of the files sent by users.
+  UPLOAD_FOLDER is a path to directory where the directories with the files sent via chat will be stored.
  - configure the allowed extensions of file that can be sent via chat.
 ```python
 UPLOAD_FOLDER = r'C:\Users\kgolonka\Desktop\chat_uploads'
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'mp3'}
 ```
- 
+
 # Dependencies
 
 Python libraries needed for project tu run can be found in the requirements.txt file.
@@ -62,19 +63,19 @@ The MongoDb database and connection can be configured.
 ##### Registration
 
 The /authorization/register route is made for registration.
-User can found href to the route on the index page on 'New hire?' card.
+User can go this page via the index page card 'New hire?'.
 User need to fill the assignment and then it will be either approved or declined by administrator. 
 ##### Login
 
 If the user have registered account it can logg in. The /authorization/ route is made for that purpose.
-Href for that URL can be found in the index page or on the navbar.
+Link for that URL can be found in the index page or on the navbar.
 User need to fill the login form with correct credentials to logg in.
 ##### Chat rooms
 
 After logging in the user will be redirected to the chat page. 
 On the left side user can find searchable list of available chats.
-He can click at any chat and then the chat rooms will be set.
-The first room is 'Company chat' which is room contacting all of the users.
+He can click at any chat and then the chat room will be set.
+The first room is 'Company chat' which is room with all of the users.
 The rest of the rooms are one on one room with another employee.
 ##### User status
 
@@ -85,7 +86,7 @@ The green dot mean that employee is logged in.
 
 ##### Chatting
 
-After setting the chat room ,user can send the message by typing the message in the bar at the bottom of chat
+After setting the chat room, user can send the message by typing the message in the bar at the bottom of chat
 and clicking either the blue arrow or enter key.
 User can preview all the sent message by scrolling in the chat.
 
@@ -104,4 +105,4 @@ To logout user need to click Logout button in the right side of the navbar
 To approve or decline registration assignments administrator can either do it by operating in the database or via GUI.
 Using GUI is possible after logging in as 'kamil'. The password is 'test'.
 Then the /authorization/assignments route will be available.
-Href for that URL will also be visible on the navbar.
+Link to that URL will also be visible on the navbar.
