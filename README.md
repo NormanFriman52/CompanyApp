@@ -15,7 +15,7 @@ and [Bootstrap 4.2](https://getbootstrap.com/docs/4.2/getting-started/introducti
 
 # How it works
 
-The server create routes and render templates for all of the key pages in the website.
+The server create routes and render templates for all of the pages in the website.
 Server also create routes for the REST API which is used for receiving and transmitting data via HTTP protocol requests.
 Then the data is dynamically fetched via Vue.js and displayed on the website.
 There is socket connection created between the both sides.
@@ -42,13 +42,21 @@ ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'mp3'}
 # Dependencies
 
 Python libraries needed for project tu run can be found in the requirements.txt file.
-Project also need to connect to MongoDB database. Host of the database can be changed in config file.
+Application also need connection with MongoDB database.
+On the front-end side app use 
+[Bootstrap 4.2](https://getbootstrap.com/docs/4.2/getting-started/introduction/), 
+[jquery-3.3.1](https://jquery.com/), 
+[VueJs](https://vuejs.org),
+[Vuetify](https://vuetifyjs.com/)
 
 # Administration
 
-Pyhon file __init__.py in the ../app/CompanyApp directory starts the application on localhost.
-To run the project you need to run this file.
+Pyhon file __init__.py in the app/CompanyApp directory starts the application on localhost.
+To run the project you need to run this file. After running this file the flask framework starts on
+the localhost:5000. 
 Application can also be deployed outside localhost, but my solution doesn't provide this functionality.
+Application on default is connected to the MongoDb on the localhost:27017 and it use ChatApp database.
+The MongoDb database and connection can be configured.
 
 # Usage
 ##### Registration
