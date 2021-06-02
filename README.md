@@ -1,14 +1,23 @@
-# CompanyApp
+## Table of contents
+* [Description](#description)
+* [How it works ](#how-it-works)
+* [Configuration](#configuration)
+* [Dependencies](#dependencies)
+* [Administration](#administration)
+* [Usage](#usage)
+* [Administrator account](#administrator-account)
 
-This an web application based on the [Flask] (https://flask.palletsprojects.com/) framework on the server side,
-and the [Vue.js] (https://vuejs.org/) javascript framework.
-The front-end site of website is created using [Vuetify] (https://vuetifyjs.com/)
-and [Bootstrap 4.2] (https://getbootstrap.com/docs/4.2/getting-started/introduction/)
+# Description
 
-# How it works?
+This an web application based on the [Flask](https://flask.palletsprojects.com/) framework on the server side,
+and the [Vue.js](https://vuejs.org/) javascript framework.
+The front-end site of website is created using [Vuetify](https://vuetifyjs.com/)
+and [Bootstrap 4.2](https://getbootstrap.com/docs/4.2/getting-started/introduction/)
+
+# How it works
 
 The server create routes and render templates for all of the key pages in the website.
-Also server create routes for the REST API which is used for receiving and transmitting data via HTTP protocol requests.
+Server also create routes for the REST API which is used for receiving and transmitting data via HTTP protocol requests.
 Then the data is dynamically fetched via Vue.js and displayed on the website.
 There is socket connection created between the both sides.
 This connection provide TCP communication for receiving messages and informing about changes in the users statuses.
@@ -33,11 +42,13 @@ ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'mp3'}
  
 # Dependencies
 
-Dependencies can be found in the requirements.txt file.
+Python libraries needed for project tu run can be found in the requirements.txt file.
+Project also need to connect to MongoDB database. Host of the database can be changed in config file.
 
 # Administration
 
 Pyhon file __init__.py in the ../app/CompanyApp directory starts the application on localhost.
+To run the project you need to run this file.
 Application can also be deployed outside localhost, but my solution doesn't provide this functionality.
 
 # Usage
