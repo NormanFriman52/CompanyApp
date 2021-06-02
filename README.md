@@ -1,18 +1,17 @@
-## Table of contents
-* [Description](#description)
-* [How it works ](#how-it-works)
-* [Configuration](#configuration)
-* [Dependencies](#dependencies)
-* [Administration](#administration)
-* [Usage](#usage)
-* [Administrator account](#administrator-account)
-
 # Description
 
 This an web application based on the [Flask](https://flask.palletsprojects.com/) framework on the server side,
 and the [Vue.js](https://vuejs.org/) javascript framework.
 The front-end site of website is created using [Vuetify](https://vuetifyjs.com/)
 and [Bootstrap 4.2](https://getbootstrap.com/docs/4.2/getting-started/introduction/)
+
+## Table of contents
+* [How it works ](#how-it-works)
+* [Configuration](#configuration)
+* [Dependencies](#dependencies)
+* [Administration](#administration)
+* [Usage](#usage)
+* [Administrator account](#administrator-account)
 
 # How it works
 
