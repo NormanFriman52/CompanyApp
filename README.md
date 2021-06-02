@@ -12,7 +12,7 @@ and [Bootstrap 4.2](https://getbootstrap.com/docs/4.2/getting-started/introducti
 * [Administration](#administration)
 * [Database](#database)
 * [Endpoints and blueprints](#endpoints-and-blueprints)
-* [Usage](#usage)
+* [Usage](#user-usage)
 * [Administrator account](#administrator-account)
 
 # How it works
@@ -104,7 +104,7 @@ Each blueprint have own endpoints.
 ##### Main Board
 /main_board/ - it is page of the chat application
 
-# Usage
+# User usage
 ##### Registration
 
 The /authorization/register route is made for registration.
