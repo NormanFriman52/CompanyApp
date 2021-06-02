@@ -11,6 +11,7 @@ and [Bootstrap 4.2](https://getbootstrap.com/docs/4.2/getting-started/introducti
 * [Dependencies](#dependencies)
 * [Administration](#administration)
 * [Database](#database)
+* [Endpoints and blueprints](#endpoints-and-blueprints)
 * [Usage](#usage)
 * [Administrator account](#administrator-account)
 
@@ -75,6 +76,33 @@ Collection stores the documents with messages in the 'Company chat' room.
 ##### users
 Collection stores the document with information about registered users.
 
+# Endpoints and blueprints.
+
+Flask framework offer categorizing routes into the subgroups called blueprints.
+```python
+app.register_blueprint(main_bp)
+app.register_blueprint(api_bp, url_prefix="/api")
+app.register_blueprint(main_board_bp, url_prefix="/board")
+app.register_blueprint(authorization_bp, url_prefix="/authorization")
+```
+These blueprints are created in __init__.py. They provide the prefix to URL route.
+Each blueprint have it's routes.
+
+##### Main
+/ - it is index page of app
+##### Api
+/api/users - REST API GET endpoint with users information\
+/api/main_board - REST API  GET endpoint with main board messages\
+/api/chat_rooms - REST API GET endpoint with chat rooms messages\
+/api/main_board/send - REST API POST endpoint which post message\
+/api/upload - REST API POST endpoint which post file
+##### Authorization
+/authorization/logout - it logout the user\
+/authorization/ - it is login page\
+/authorization/register - it is register page\
+/authorization/assignments - it is administrator page for assignments
+##### Main Board
+/main_board/ - it is page of the chat application
 
 # Usage
 ##### Registration
