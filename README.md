@@ -62,8 +62,8 @@ The MongoDb database and connection can be configured.
 
 # Database
 
-Application uses MongoDB database running on the localhost:27017, host can be changed in config file.
-Structure of the database contains 4 collections:
+Application uses MongoDB database running on the localhost:27017, host can be changed in config file.\
+Database contains 4 collections:
 ##### assignments
 Collection stores the registration documents created by users that filled register form.
 ##### chat_rooms
