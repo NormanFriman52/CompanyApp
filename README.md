@@ -10,6 +10,7 @@ and [Bootstrap 4.2](https://getbootstrap.com/docs/4.2/getting-started/introducti
 * [Configuration](#configuration)
 * [Dependencies](#dependencies)
 * [Administration](#administration)
+* [Database](#database)
 * [Usage](#usage)
 * [Administrator account](#administrator-account)
 
@@ -58,6 +59,22 @@ the localhost:5000.
 Application can also be deployed outside localhost, but my solution doesn't provide this functionality.
 Application on default is connected to the MongoDb on the localhost:27017 and it use ChatApp database.
 The MongoDb database and connection can be configured.
+
+# Database
+
+Application uses MongoDB database running on the localhost:27017, host can be changed in config file.
+Structure of the database contains 4 collections:
+##### assignments
+Collection stores the registration documents created by users that filled register form.
+##### chat_rooms
+Collection stores the documents with information about the chat rooms. Each document contains unique chat room of two users.
+The document is identified by the "participants" key which value is array of users in the room.
+The value of "messages" key in each document contains all messages in chat room.
+##### main_board
+Collection stores the documents with messages in the 'Company chat' room.
+##### users
+Collection stores the document with information about registered users.
+
 
 # Usage
 ##### Registration
